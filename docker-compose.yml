@@ -1,0 +1,157 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: splash25-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: splash25_core_db
+      POSTGRES_USER: splash25user
+      POSTGRES_PASSWORD: splash25password
+      PGDATA: /var/lib/postgresql/data/pgdata
+    command: [
+      "postgres",
+      "-c", "log_statement=all",
+      "-c", "log_destination=stderr",
+      "-c", "log_min_messages=info",
+      "-c", "log_min_error_statement=info",
+      "-c", "log_min_duration_statement=0",
+      "-c", "log_connections=on",
+      "-c", "log_disconnections=on",
+      "-c", "log_duration=on",
+      "-c", "log_line_prefix=%t [%p]: [%l-1] user=%u,db=%d,app=%a,client=%h "
+    ]
+    ports:
+      - "5432:5432"
+    volumes:
+      - splash25:/var/lib/postgresql/data
+      - ./splash25-db/init-scripts:/docker-entrypoint-initdb.d:ro
+    networks:
+      - splash25-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U splash25user -d splash25_core_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # Redis Cache (Optional - for sessions/caching)
+  redis:
+    image: redis:7-alpine
+    container_name: splash25-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - splash25-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    command: redis-server --appendonly yes
+
+  # Flask Backend API
+  backend:
+    build:
+      context: ./splash25-backend
+      dockerfile: Dockerfile
+    container_name: splash25-backend
+    restart: unless-stopped
+    user: "1000:1000"
+    environment:
+      - DATABASE_URI=postgresql://splash25user:splash25password@postgres:5432/splash25_core_db
+      - JWT_SECRET_KEY=splash25-super-secret-key-change-in-production
+      - FLASK_APP=run.py
+      - FLASK_ENV=development
+      - FLASK_DEBUG=1
+      - SQLALCHEMY_TRACK_MODIFICATIONS=False
+      - SQLALCHEMY_ECHO=False
+      - REDIS_URL=redis://redis:6379/0
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./splash25-backend/app:/app/app:ro
+      - backend_logs:/app/logs
+    networks:
+      - splash25-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # React Frontend
+  frontend:
+    build:
+      context: ./splash25-ui
+      dockerfile: Dockerfile.dev
+    container_name: splash25-frontend
+    restart: unless-stopped
+    user: "1000:1000"
+    ports:
+      - "3000:8080" #8080
+      - "24678:24678"  # HMR port
+    networks:
+      - splash25-network
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    container_name: splash25-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./splash25-ui/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./splash25-ui/nginx/conf.d:/etc/nginx/conf.d:ro
+      - nginx_logs:/var/log/nginx
+      - ./ssl:/etc/nginx/ssl:ro  # For SSL certificates if needed
+    networks:
+      - splash25-network
+    depends_on:
+      - frontend
+      - backend
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  splash25:
+    name: splash25
+  redis_data:
+    name: splash25-redis-data
+  backend_logs:
+    name: splash25-backend-logs
+  nginx_logs:
+    name: splash25-nginx-logs
+
+networks:
+  splash25-network:
+    name: splash25-network
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.23.0.0/16

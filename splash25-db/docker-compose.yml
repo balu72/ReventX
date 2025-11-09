@@ -1,0 +1,30 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: splash25-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: splash25_core_db
+      POSTGRES_USER: splash25user
+      POSTGRES_PASSWORD: splash25password
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      #- ./init-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - splash25-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U splash25user -d splash25_core_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+    name: splash25-postgres-data
+
+networks:
+  splash25-network:
+    driver: bridge

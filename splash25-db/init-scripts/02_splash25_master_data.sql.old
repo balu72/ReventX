@@ -1,0 +1,143 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 15.13
+-- Dumped by pg_dump version 15.13
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- Data for Name: buyer_categories; Type: TABLE DATA; Schema: public; Owner: splash25user
+--
+
+INSERT INTO public.buyer_categories VALUES (2, 'Pre-reg', 0.00, 500.00, false, false, 0, 0, '2025-05-26 05:27:33.810811');
+INSERT INTO public.buyer_categories VALUES (4, 'Blogger', 0.00, 0.00, true, true, 0, 0, '2025-05-26 05:27:33.810811');
+INSERT INTO public.buyer_categories VALUES (5, 'Government', 0.00, 0.00, true, true, 0, 0, '2025-05-26 05:27:33.810811');
+INSERT INTO public.buyer_categories VALUES (1, 'Hosted', 10000.00, 2500.00, true, true, 30, 10, '2025-05-26 05:27:33.810811');
+INSERT INTO public.buyer_categories VALUES (6, 'Student', 0.00, 500.00, false, false, 0, 0, '2025-05-26 05:27:33.810811');
+INSERT INTO public.buyer_categories VALUES (3, 'Media', NULL, NULL, false, false, 30, 10, '2025-05-26 05:27:33.810811');
+
+
+--
+-- Data for Name: domain_restrictions; Type: TABLE DATA; Schema: public; Owner: splash25user
+--
+
+
+
+--
+-- Data for Name: host_properties; Type: TABLE DATA; Schema: public; Owner: splash25user
+--
+-- (property_id,property_name,rooms_allotted,contact_person_name,contact_phone,contact_email,property_address,number_current_guests,number_rooms_allocated) VALUES --
+INSERT INTO public.host_properties VALUES (1, 'Abad Brookside Lakkidi', 6, 'Joshi', '7306023338', 'reservations@abadhotel.com', NULL, 6, 3);
+INSERT INTO public.host_properties VALUES (2,'After the Rains',4,'Rakesh','9400881898','info@aftertherains.in',NULL,0,0);
+INSERT INTO public.host_properties VALUES (3,'Ananterra Resort Wayanad',5,'Soorajith','9742385328','surji@outlook.com',NULL,0,0);
+INSERT INTO public.host_properties VALUES (4,'Annapara',3,'Safar','94430223320','annappahomestay@gmail.com',NULL,0,0);
+INSERT INTO public.host_properties VALUES (5,'Aranyakam Homestay',0,'Rajesh','9745539633','stay@aranyakam.com',NULL,0,0);
+
+--
+-- Data for Name: interests; Type: TABLE DATA; Schema: public; Owner: splash25user
+--
+
+INSERT INTO public.interests VALUES (1, 'Adventure', NULL, '2025-05-26 05:27:33.810465');
+INSERT INTO public.interests VALUES (2, 'Agritourism', NULL, '2025-05-26 05:27:33.810465');
+INSERT INTO public.interests VALUES (3, 'Ayurveda', NULL, '2025-05-26 05:27:33.810465');
+INSERT INTO public.interests VALUES (4, 'Culture', NULL, '2025-05-26 05:27:33.810465');
+INSERT INTO public.interests VALUES (5, 'Family Holidays', NULL, '2025-05-26 05:27:33.810465');
+INSERT INTO public.interests VALUES (6, 'Honeymoon', NULL, '2025-05-26 05:27:33.810465');
+INSERT INTO public.interests VALUES (7, 'MICE', NULL, '2025-05-26 05:27:33.810465');
+INSERT INTO public.interests VALUES (8, 'Nature', NULL, '2025-05-26 05:27:33.810465');
+INSERT INTO public.interests VALUES (9, 'Schools & Colleges', NULL, '2025-05-26 05:27:33.810465');
+INSERT INTO public.interests VALUES (10, 'Spiritual', NULL, '2025-05-26 05:27:33.810465');
+INSERT INTO public.interests VALUES (11, 'Wildlife', NULL, '2025-05-26 05:27:33.810465');
+INSERT INTO public.interests VALUES (12, 'Yoga', NULL, '2025-05-26 05:27:33.810465');
+INSERT INTO public.interests VALUES (13, 'Sightseeing', NULL, '2025-05-26 05:27:33.810465');
+
+
+--
+-- Data for Name: property_types; Type: TABLE DATA; Schema: public; Owner: splash25user
+--
+
+INSERT INTO public.property_types VALUES (1, 'Homestay', NULL, '2025-05-26 05:27:33.811149');
+INSERT INTO public.property_types VALUES (2, 'Service Villa', NULL, '2025-05-26 05:27:33.811149');
+INSERT INTO public.property_types VALUES (3, 'Budget Resort', NULL, '2025-05-26 05:27:33.811149');
+INSERT INTO public.property_types VALUES (4, 'Premium Resort', NULL, '2025-05-26 05:27:33.811149');
+INSERT INTO public.property_types VALUES (5, 'Not a property', NULL, '2025-05-26 05:27:33.811149');
+INSERT INTO public.property_types VALUES (6, 'Luxury Hotel', '5 Star Hotel', '2025-06-04 10:48:26.090078');
+
+
+--
+-- Data for Name: stall_types; Type: TABLE DATA; Schema: public; Owner: splash25user
+--
+
+INSERT INTO public.stall_types VALUES (3, 'Premium Stall', 40000.00, 4, 30, 0, '4m x 2m', true, 'Premium branding, meeting table, chairs, power supply, WiFi', '2025-05-26 05:27:33.811451', 1, 1, 3500);
+INSERT INTO public.stall_types VALUES (4, 'Premium Corner', 44000.00, 4, 30, 0, '4m x 2m', true, 'Corner location, premium branding, meeting table, chairs, power supply, WiFi', '2025-05-26 05:27:33.811451', 1, 1, 3500);
+INSERT INTO public.stall_types VALUES (5, 'Tablespace', 12000.00, 1, 30, 0, '1.5m x 1m', true, 'Table space, chairs, power supply', '2025-05-26 05:27:33.811451', 1, 1, 3500);
+INSERT INTO public.stall_types VALUES (6, 'WTO Standard Stall', 20000.00, 2, 30, 0, '2m x 2m', false, 'Standard location, basic branding, meeting space, chairs, power supply', '2025-05-26 05:27:33.811451', 1, 1, 3500);
+INSERT INTO public.stall_types VALUES (7, 'FOC Std Stall', 0.00, 2, 0, 0, '2m x 2m', false, 'Standard location, basic branding, meeting space, chairs, power supply', '2025-05-26 05:27:33.811451', 1, 1, 3500);
+INSERT INTO public.stall_types VALUES (8, 'Sponsor Stall', 0.00, 2, 0, 0, '2m x 2m', false, 'Stall for Sponsor, meeting space, chairs, power supply', '2025-05-26 05:27:33.811451', 1, 1, 3500);
+INSERT INTO public.stall_types VALUES (2, 'Standard Corner', 30000.00, 2, 30, 0, '2m x 2m', true, 'Corner location, meeting table, chairs, power supply, WiFi', '2025-05-26 05:27:33.811451', 1, 1, 3500);
+INSERT INTO public.stall_types VALUES (1, 'Standard Stall', 35000.00, 2, 30, 0, '2m x 2m', true, 'Standard location, basic branding, meeting space, chairs, power supply', '2025-05-26 05:27:33.811451', 1, 1, 3500);
+
+
+--
+-- Data for Name: system_settings; Type: TABLE DATA; Schema: public; Owner: splash25user
+--
+
+INSERT INTO public.system_settings VALUES (7, 'event_start_date', '2025-07-11T00:00:00.000Z', 'Event start date and time', '2025-06-08 17:38:13.599322', NULL);
+INSERT INTO public.system_settings VALUES (8, 'event_end_date', '2025-07-13T23:59:59.000Z', 'Event end date and time', '2025-06-08 17:38:13.599322', NULL);
+INSERT INTO public.system_settings VALUES (2, 'meeting_duration', '25', 'Meeting duration in minutes', '2025-06-01 12:46:46.272795', '2025-06-14 08:24:36.921501');
+INSERT INTO public.system_settings VALUES (3, 'meeting_interval', '5', 'Interval between meeting slots in minutes', '2025-06-01 12:46:46.274003', '2025-06-14 08:24:36.921501');
+INSERT INTO public.system_settings VALUES (4, 'day_start_time', '9:00 AM', 'Day start time for meetings', '2025-06-01 12:46:46.275207', '2025-06-14 08:24:36.921501');
+INSERT INTO public.system_settings VALUES (5, 'day_end_time', '5:00 PM', 'Day end time for meetings', '2025-06-01 12:46:46.276258', '2025-06-14 08:24:36.921501');
+INSERT INTO public.system_settings VALUES (6, 'meeting_breaks', '[{"id": 1, "label": "Lunch Break", "startTime": "12:00 PM", "endTime": "1:00 PM"}]', 'Meeting breaks configuration (JSON)', '2025-06-01 12:46:46.277245', '2025-06-14 08:24:36.921501');
+INSERT INTO public.system_settings VALUES (9, 'max_seller_attendees_per_day', '30', 'Maximum seller attendees per day', '2025-06-14 08:22:33.295575', '2025-06-14 08:24:36.921501');
+INSERT INTO public.system_settings VALUES (10, 'max_buyer_meetings_per_day', '30', 'Maximum buyer meetings per day', '2025-06-14 08:22:33.297764', '2025-06-14 08:24:36.921501');
+INSERT INTO public.system_settings VALUES (12, 'registration_open', 'true', 'Setting for registration_open', '2025-06-14 08:54:52.146758', '2025-06-14 08:56:41.43361');
+INSERT INTO public.system_settings VALUES (11, 'travel_plans_enabled', 'true', 'Enable/disable travel plans functionality', '2025-06-14 08:50:28.690849', '2025-06-14 09:12:54.497721');
+INSERT INTO public.system_settings VALUES (1, 'meetings_enabled', 'true', 'Enable or disable meeting requests functionality', '2025-06-01 12:41:58.83444', '2025-06-16 13:23:02.148471');
+
+
+--
+-- Data for Name: transport_types; Type: TABLE DATA; Schema: public; Owner: splash25user
+--
+
+INSERT INTO public.transport_types VALUES (4, 'Tavera', 'Tavera (4 Seater)', 4, NULL, NULL, 0, '2025-06-21 13:19:21.379665', '2025-06-21 13:19:21.379665');
+INSERT INTO public.transport_types VALUES (5, 'Innova', 'Innova', 4, NULL, NULL, 0, '2025-06-21 13:19:21.379665', '2025-06-21 13:19:21.379665');
+INSERT INTO public.transport_types VALUES (6, 'TT_14', 'Tempo Traveller (9 Seater)', 9, NULL, NULL, 0, '2025-06-21 13:19:21.379665', '2025-06-21 13:19:21.379665');
+INSERT INTO public.transport_types VALUES (7, 'TT_17', 'Tempo Traveller (12 seater)', 12, NULL, NULL, 0, '2025-06-21 13:19:21.379665', '2025-06-21 13:19:21.379665');
+INSERT INTO public.transport_types VALUES (8, 'Bus_24', 'Bus (20 seater)', 20, NULL, NULL, 0, '2025-06-21 13:19:21.379665', '2025-06-21 13:19:21.379665');
+INSERT INTO public.transport_types VALUES (9, 'Bus_26', 'Bus (22 seater)', 22, NULL, NULL, 0, '2025-06-21 13:19:21.379665', '2025-06-21 13:19:21.379665');
+INSERT INTO public.transport_types VALUES (10, 'Bus_35', 'Bus (35 seater)', 30, NULL, NULL, 0, '2025-06-21 13:19:21.379665', '2025-06-21 13:19:21.379665');
+INSERT INTO public.transport_types VALUES (11, 'Bus_49', 'Bus (40 seater)', 40, NULL, NULL, 0, '2025-06-21 13:19:21.379665', '2025-06-21 13:19:21.379665');
+INSERT INTO public.transport_types VALUES (12, 'Bullet', 'Enfield', 2, 'Balu', '9740090435', 5, '2025-06-21 13:42:35.293622', '2025-06-21 13:42:35.293625');
+INSERT INTO public.transport_types VALUES (3, 'Sedan', 'Sedan (3 seater)', 4, NULL, NULL, 0, '2025-06-21 13:19:21.379665', '2025-06-21 16:23:35.202161');
+
+
+--
+-- Name: host_properties_property_id_seq; Type: SEQUENCE SET; Schema: public; Owner: splash25user
+--
+
+SELECT pg_catalog.setval('public.host_properties_property_id_seq', 1, true);
+
+
+--
+-- Name: transport_types_transport_type_id_seq; Type: SEQUENCE SET; Schema: public; Owner: splash25user
+--
+
+SELECT pg_catalog.setval('public.transport_types_transport_type_id_seq', 12, true);
+
+
+--
+-- PostgreSQL database dump complete
+--
+

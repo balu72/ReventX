@@ -1,0 +1,2943 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 15.13
+-- Dumped by pg_dump version 15.13
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+DO $$
+BEGIN
+RAISE NOTICE 'Starting Schema Creation';
+END;
+$$ LANGUAGE plpgsql;
+
+ALTER TABLE  IF EXISTS public.travel_plans DROP CONSTRAINT IF EXISTS travel_plans_user_id_fkey;
+ALTER TABLE  IF EXISTS public.transportation DROP CONSTRAINT IF EXISTS transportation_travel_plan_id_fkey;
+ALTER TABLE  IF EXISTS public.time_slots DROP CONSTRAINT IF EXISTS time_slots_user_id_fkey;
+ALTER TABLE  IF EXISTS public.stalls DROP CONSTRAINT IF EXISTS stalls_stall_type_id_fkey;
+ALTER TABLE  IF EXISTS public.stalls DROP CONSTRAINT IF EXISTS stalls_seller_id_fkey;
+ALTER TABLE  IF EXISTS public.stall_inventory DROP CONSTRAINT IF EXISTS stall_inventory_stall_type_id_fkey;
+ALTER TABLE  IF EXISTS public.stall_database DROP CONSTRAINT IF EXISTS stall_database_stall_type_id_fkey;
+ALTER TABLE  IF EXISTS public.seller_target_markets DROP CONSTRAINT IF EXISTS seller_target_markets_seller_profile_id_fkey;
+ALTER TABLE  IF EXISTS public.seller_target_markets DROP CONSTRAINT IF EXISTS seller_target_markets_interest_id_fkey;
+ALTER TABLE  IF EXISTS public.seller_target_market DROP CONSTRAINT IF EXISTS seller_target_market_target_market_id_fkey;
+ALTER TABLE  IF EXISTS public.seller_target_market DROP CONSTRAINT IF EXISTS seller_target_market_seller_id_fkey;
+ALTER TABLE  IF EXISTS public.seller_stall DROP CONSTRAINT IF EXISTS seller_stall_stall_type_id_fkey;
+ALTER TABLE  IF EXISTS public.seller_stall DROP CONSTRAINT IF EXISTS seller_stall_seller_id_fkey;
+ALTER TABLE  IF EXISTS public.seller_references DROP CONSTRAINT IF EXISTS seller_references_seller_profile_id_fkey;
+ALTER TABLE  IF EXISTS public.seller_reference DROP CONSTRAINT IF EXISTS seller_reference_seller_id_fkey;
+ALTER TABLE  IF EXISTS public.seller_profiles DROP CONSTRAINT IF EXISTS seller_profiles_user_id_fkey;
+ALTER TABLE  IF EXISTS public.seller_profiles DROP CONSTRAINT IF EXISTS seller_profiles_property_type_id_fkey;
+ALTER TABLE  IF EXISTS public.seller_primary_contact DROP CONSTRAINT IF EXISTS seller_primary_contact_seller_id_fkey;
+ALTER TABLE  IF EXISTS public.seller_financial DROP CONSTRAINT IF EXISTS seller_financial_seller_id_fkey;
+ALTER TABLE  IF EXISTS public.seller_financial_info DROP CONSTRAINT IF EXISTS seller_financial_info_seller_profile_id_fkey;
+ALTER TABLE  IF EXISTS public.seller_business DROP CONSTRAINT IF EXISTS seller_business_seller_type_fkey;
+ALTER TABLE  IF EXISTS public.seller_business DROP CONSTRAINT IF EXISTS seller_business_seller_id_fkey;
+ALTER TABLE  IF EXISTS public.seller_business_info DROP CONSTRAINT IF EXISTS seller_business_info_seller_profile_id_fkey;
+ALTER TABLE  IF EXISTS public.seller_attendees DROP CONSTRAINT IF EXISTS seller_attendees_seller_profile_id_fkey;
+ALTER TABLE  IF EXISTS public.pending_buyers DROP CONSTRAINT IF EXISTS pending_buyers_invited_buyer_id_fkey;
+ALTER TABLE  IF EXISTS public.migration_mapping_sellers DROP CONSTRAINT IF EXISTS migration_mapping_sellers_splash25_user_id_fkey;
+ALTER TABLE  IF EXISTS public.migration_mapping_sellers DROP CONSTRAINT IF EXISTS migration_mapping_sellers_splash25_seller_profile_id_fkey;
+ALTER TABLE  IF EXISTS public.migration_mapping_buyers DROP CONSTRAINT IF EXISTS migration_mapping_buyers_splash25_user_id_fkey;
+ALTER TABLE  IF EXISTS public.migration_mapping_buyers DROP CONSTRAINT IF EXISTS migration_mapping_buyers_splash25_buyer_profile_id_fkey;
+ALTER TABLE  IF EXISTS public.meetings DROP CONSTRAINT IF EXISTS meetings_time_slot_id_fkey;
+ALTER TABLE  IF EXISTS public.meetings DROP CONSTRAINT IF EXISTS meetings_seller_id_fkey;
+ALTER TABLE  IF EXISTS public.meetings DROP CONSTRAINT IF EXISTS meetings_requestor_id_fkey;
+ALTER TABLE  IF EXISTS public.meetings DROP CONSTRAINT IF EXISTS meetings_buyer_id_fkey;
+ALTER TABLE  IF EXISTS public.meetings DROP CONSTRAINT IF EXISTS meetings_attendee_id_fkey;
+ALTER TABLE  IF EXISTS public.listings DROP CONSTRAINT IF EXISTS listings_seller_id_fkey;
+ALTER TABLE  IF EXISTS public.listing_dates DROP CONSTRAINT IF EXISTS listing_dates_listing_id_fkey;
+ALTER TABLE  IF EXISTS public.invited_buyers DROP CONSTRAINT IF EXISTS invited_buyers_invited_by_fkey;
+ALTER TABLE  IF EXISTS public.ground_transportation DROP CONSTRAINT IF EXISTS ground_transportation_travel_plan_id_fkey;
+ALTER TABLE  IF EXISTS public.time_slots DROP CONSTRAINT IF EXISTS fk_time_slots_meeting;
+ALTER TABLE  IF EXISTS public.buyer_references DROP CONSTRAINT IF EXISTS buyer_references_buyer_profile_id_fkey;
+ALTER TABLE  IF EXISTS public.buyer_reference DROP CONSTRAINT IF EXISTS buyer_reference_buyer_id_fkey;
+ALTER TABLE  IF EXISTS public.buyer_profiles DROP CONSTRAINT IF EXISTS buyer_profiles_user_id_fkey;
+ALTER TABLE  IF EXISTS public.buyer_profiles DROP CONSTRAINT IF EXISTS buyer_profiles_category_id_fkey;
+ALTER TABLE  IF EXISTS public.buyer_profile_interests DROP CONSTRAINT IF EXISTS buyer_profile_interests_interest_id_fkey;
+ALTER TABLE  IF EXISTS public.buyer_profile_interests DROP CONSTRAINT IF EXISTS buyer_profile_interests_buyer_profile_id_fkey;
+ALTER TABLE  IF EXISTS public.buyer_misc DROP CONSTRAINT IF EXISTS buyer_misc_buyer_id_fkey;
+ALTER TABLE  IF EXISTS public.buyer_interest DROP CONSTRAINT IF EXISTS buyer_interest_interest_id_fkey;
+ALTER TABLE  IF EXISTS public.buyer_interest DROP CONSTRAINT IF EXISTS buyer_interest_buyer_id_fkey;
+ALTER TABLE  IF EXISTS public.buyer_financial_info DROP CONSTRAINT IF EXISTS buyer_financial_info_buyer_profile_id_fkey;
+ALTER TABLE  IF EXISTS public.buyer_financial DROP CONSTRAINT IF EXISTS buyer_financial_buyer_id_fkey;
+ALTER TABLE  IF EXISTS public.buyer_demographic DROP CONSTRAINT IF EXISTS buyer_demographic_buyer_id_fkey;
+ALTER TABLE  IF EXISTS public.buyer DROP CONSTRAINT IF EXISTS buyer_category_id_fkey;
+ALTER TABLE  IF EXISTS public.buyer_business_info DROP CONSTRAINT IF EXISTS buyer_business_info_buyer_profile_id_fkey;
+ALTER TABLE  IF EXISTS public.buyer_business DROP CONSTRAINT IF EXISTS buyer_business_buyer_id_fkey;
+ALTER TABLE  IF EXISTS public.accommodations DROP CONSTRAINT IF EXISTS accommodations_travel_plan_id_fkey;
+DROP INDEX IF EXISTS public.idx_users_idx_users_role;
+DROP INDEX IF EXISTS public.idx_users_idx_users_email;
+DROP INDEX IF EXISTS public.idx_time_slots_idx_time_slots_user_id;
+DROP INDEX IF EXISTS public.idx_time_slots_idx_time_slots_available;
+DROP INDEX IF EXISTS public.idx_stalls_idx_stalls_type;
+DROP INDEX IF EXISTS public.idx_stalls_idx_stalls_seller_id;
+DROP INDEX IF EXISTS public.idx_stalls_idx_stalls_number;
+DROP INDEX IF EXISTS public.idx_seller_target_markets_idx_seller_target_markets_seller;
+DROP INDEX IF EXISTS public.idx_seller_target_markets_idx_seller_target_markets_interest;
+DROP INDEX IF EXISTS public.idx_seller_target_market_idx_seller_target_market_seller;
+DROP INDEX IF EXISTS public.idx_seller_target_market_idx_seller_target_market_interest;
+DROP INDEX IF EXISTS public.idx_seller_profiles_idx_seller_profiles_user_id;
+DROP INDEX IF EXISTS public.idx_seller_profiles_idx_seller_profiles_status;
+DROP INDEX IF EXISTS public.idx_seller_profiles_idx_seller_profiles_property_type;
+DROP INDEX IF EXISTS public.idx_seller_profiles_business_images;
+DROP INDEX IF EXISTS public.idx_seller_idx_seller_status;
+DROP INDEX IF EXISTS public.idx_seller_attendees_idx_seller_attendees_seller;
+DROP INDEX IF EXISTS public.idx_meetings_idx_meetings_status;
+DROP INDEX IF EXISTS public.idx_meetings_idx_meetings_seller_id;
+DROP INDEX IF EXISTS public.idx_meetings_idx_meetings_buyer_id;
+DROP INDEX IF EXISTS public.idx_meetings_idx_meetings_attendee;
+DROP INDEX IF EXISTS public.idx_buyer_profiles_idx_buyer_profiles_user_id;
+DROP INDEX IF EXISTS public.idx_buyer_profiles_idx_buyer_profiles_status;
+DROP INDEX IF EXISTS public.idx_buyer_profiles_idx_buyer_profiles_category;
+DROP INDEX IF EXISTS public.idx_buyer_profile_interests_idx_buyer_profile_interests_interes;
+DROP INDEX IF EXISTS public.idx_buyer_profile_interests_idx_buyer_profile_interests_buyer;
+DROP INDEX IF EXISTS public.idx_buyer_interest_idx_buyer_interest_interest;
+DROP INDEX IF EXISTS public.idx_buyer_interest_idx_buyer_interest_buyer;
+DROP INDEX IF EXISTS public.idx_buyer_idx_buyer_status;
+DROP INDEX IF EXISTS public.idx_buyer_idx_buyer_email;
+DROP INDEX IF EXISTS public.idx_buyer_idx_buyer_category;
+ALTER TABLE  IF EXISTS public.users DROP CONSTRAINT IF EXISTS users_pkey;
+ALTER TABLE  IF EXISTS public.travel_plans DROP CONSTRAINT IF EXISTS travel_plans_pkey;
+ALTER TABLE  IF EXISTS public.transportation DROP CONSTRAINT IF EXISTS transportation_pkey;
+ALTER TABLE  IF EXISTS public.time_slots DROP CONSTRAINT IF EXISTS time_slots_pkey;
+ALTER TABLE  IF EXISTS public.system_settings DROP CONSTRAINT IF EXISTS system_settings_pkey;
+ALTER TABLE  IF EXISTS public.stalls DROP CONSTRAINT IF EXISTS stalls_pkey;
+ALTER TABLE  IF EXISTS public.stall_types DROP CONSTRAINT IF EXISTS stall_types_pkey;
+ALTER TABLE  IF EXISTS public.stall_inventory DROP CONSTRAINT IF EXISTS stall_inventory_pkey;
+ALTER TABLE  IF EXISTS public.stall_database DROP CONSTRAINT IF EXISTS stall_database_pkey;
+ALTER TABLE  IF EXISTS public.seller_target_markets DROP CONSTRAINT IF EXISTS seller_target_markets_pkey;
+ALTER TABLE  IF EXISTS public.seller_target_market DROP CONSTRAINT IF EXISTS seller_target_market_pkey;
+ALTER TABLE  IF EXISTS public.seller_stall DROP CONSTRAINT IF EXISTS seller_stall_pkey;
+ALTER TABLE  IF EXISTS public.seller_references DROP CONSTRAINT IF EXISTS seller_references_pkey;
+ALTER TABLE  IF EXISTS public.seller_reference DROP CONSTRAINT IF EXISTS seller_reference_pkey;
+ALTER TABLE  IF EXISTS public.seller_profiles DROP CONSTRAINT IF EXISTS seller_profiles_pkey;
+ALTER TABLE  IF EXISTS public.seller_primary_contact DROP CONSTRAINT IF EXISTS seller_primary_contact_pkey;
+ALTER TABLE  IF EXISTS public.seller DROP CONSTRAINT IF EXISTS seller_pkey;
+ALTER TABLE  IF EXISTS public.seller_financial DROP CONSTRAINT IF EXISTS seller_financial_pkey;
+ALTER TABLE  IF EXISTS public.seller_financial_info DROP CONSTRAINT IF EXISTS seller_financial_info_pkey;
+ALTER TABLE  IF EXISTS public.seller_business DROP CONSTRAINT IF EXISTS seller_business_pkey;
+ALTER TABLE  IF EXISTS public.seller_business_info DROP CONSTRAINT IF EXISTS seller_business_info_pkey;
+ALTER TABLE  IF EXISTS public.seller_attendees DROP CONSTRAINT IF EXISTS seller_attendees_pkey;
+ALTER TABLE  IF EXISTS public.property_types DROP CONSTRAINT IF EXISTS property_types_pkey;
+ALTER TABLE  IF EXISTS public.property_type DROP CONSTRAINT IF EXISTS property_type_pkey;
+ALTER TABLE  IF EXISTS public.pending_buyers DROP CONSTRAINT IF EXISTS pending_buyers_pkey;
+ALTER TABLE  IF EXISTS public.migration_mapping_sellers DROP CONSTRAINT IF EXISTS migration_mapping_sellers_pkey;
+ALTER TABLE  IF EXISTS public.migration_mapping_buyers DROP CONSTRAINT IF EXISTS migration_mapping_buyers_pkey;
+ALTER TABLE  IF EXISTS public.migration_log DROP CONSTRAINT IF EXISTS migration_log_pkey;
+ALTER TABLE  IF EXISTS public.meetings DROP CONSTRAINT IF EXISTS meetings_pkey;
+ALTER TABLE  IF EXISTS public.listings DROP CONSTRAINT IF EXISTS listings_pkey;
+ALTER TABLE  IF EXISTS public.listing_dates DROP CONSTRAINT IF EXISTS listing_dates_pkey;
+ALTER TABLE  IF EXISTS public.invited_buyers DROP CONSTRAINT IF EXISTS invited_buyers_pkey;
+ALTER TABLE  IF EXISTS public.interests DROP CONSTRAINT IF EXISTS interests_pkey;
+ALTER TABLE  IF EXISTS public.interest DROP CONSTRAINT IF EXISTS interest_pkey;
+ALTER TABLE  IF EXISTS public.ground_transportation DROP CONSTRAINT IF EXISTS ground_transportation_pkey;
+ALTER TABLE  IF EXISTS public.domain_restrictions DROP CONSTRAINT IF EXISTS domain_restrictions_pkey;
+ALTER TABLE  IF EXISTS public.buyer_references DROP CONSTRAINT IF EXISTS buyer_references_pkey;
+ALTER TABLE  IF EXISTS public.buyer_reference DROP CONSTRAINT IF EXISTS buyer_reference_pkey;
+ALTER TABLE  IF EXISTS public.buyer_profiles DROP CONSTRAINT IF EXISTS buyer_profiles_pkey;
+ALTER TABLE  IF EXISTS public.buyer_profile_interests DROP CONSTRAINT IF EXISTS buyer_profile_interests_pkey;
+ALTER TABLE  IF EXISTS public.buyer DROP CONSTRAINT IF EXISTS buyer_pkey;
+ALTER TABLE  IF EXISTS public.buyer_misc DROP CONSTRAINT IF EXISTS buyer_misc_pkey;
+ALTER TABLE  IF EXISTS public.buyer_interest DROP CONSTRAINT IF EXISTS buyer_interest_pkey;
+ALTER TABLE  IF EXISTS public.buyer_financial DROP CONSTRAINT IF EXISTS buyer_financial_pkey;
+ALTER TABLE  IF EXISTS public.buyer_financial_info DROP CONSTRAINT IF EXISTS buyer_financial_info_pkey;
+ALTER TABLE  IF EXISTS public.buyer_demographic DROP CONSTRAINT IF EXISTS buyer_demographic_pkey;
+ALTER TABLE  IF EXISTS public.buyer_category DROP CONSTRAINT IF EXISTS buyer_category_pkey;
+ALTER TABLE  IF EXISTS public.buyer_categories DROP CONSTRAINT IF EXISTS buyer_categories_pkey;
+ALTER TABLE  IF EXISTS public.buyer_business DROP CONSTRAINT IF EXISTS buyer_business_pkey;
+ALTER TABLE  IF EXISTS public.buyer_business_info DROP CONSTRAINT IF EXISTS buyer_business_info_pkey;
+ALTER TABLE  IF EXISTS public.accommodations DROP CONSTRAINT IF EXISTS accommodations_pkey;
+DROP TABLE IF EXISTS public.users;
+DROP SEQUENCE IF EXISTS public.users_id_seq;
+DROP TABLE IF EXISTS public.travel_plans;
+DROP SEQUENCE IF EXISTS public.travel_plans_id_seq;
+DROP TABLE IF EXISTS public.transportation;
+DROP SEQUENCE IF EXISTS public.transportation_id_seq;
+DROP TABLE IF EXISTS public.time_slots;
+DROP SEQUENCE IF EXISTS public.time_slots_id_seq;
+DROP TABLE IF EXISTS public.system_settings;
+DROP SEQUENCE IF EXISTS public.system_settings_id_seq;
+DROP TABLE IF EXISTS public.stalls;
+DROP SEQUENCE IF EXISTS public.stalls_id_seq;
+DROP TABLE IF EXISTS public.stall_types;
+DROP SEQUENCE IF EXISTS public.stall_types_id_seq;
+DROP TABLE IF EXISTS public.stall_inventory;
+DROP SEQUENCE IF EXISTS public.stall_inventory_id_seq;
+DROP TABLE IF EXISTS public.stall_database;
+DROP SEQUENCE IF EXISTS public.stall_database_stall_number_id_seq;
+DROP TABLE IF EXISTS public.seller_target_markets;
+DROP SEQUENCE IF EXISTS public.seller_target_markets_id_seq;
+DROP TABLE IF EXISTS public.seller_target_market;
+DROP SEQUENCE IF EXISTS public.seller_target_market_target_market_number_seq;
+DROP TABLE IF EXISTS public.seller_stall;
+DROP SEQUENCE IF EXISTS public.seller_stall_seller_stall_id_seq;
+DROP TABLE IF EXISTS public.seller_references;
+DROP SEQUENCE IF EXISTS public.seller_references_id_seq;
+DROP TABLE IF EXISTS public.seller_reference;
+DROP TABLE IF EXISTS public.seller_profiles;
+DROP SEQUENCE IF EXISTS public.seller_profiles_id_seq;
+DROP TABLE IF EXISTS public.seller_primary_contact;
+DROP TABLE IF EXISTS public.seller_financial_info;
+DROP SEQUENCE IF EXISTS public.seller_financial_info_id_seq;
+DROP TABLE IF EXISTS public.seller_financial;
+DROP TABLE IF EXISTS public.seller_business_info;
+DROP SEQUENCE IF EXISTS public.seller_business_info_id_seq;
+DROP TABLE IF EXISTS public.seller_business;
+DROP TABLE IF EXISTS public.seller_attendees;
+DROP SEQUENCE IF EXISTS public.seller_attendees_id_seq;
+DROP TABLE IF EXISTS public.seller;
+DROP SEQUENCE IF EXISTS public.seller_seller_id_seq;
+DROP TABLE IF EXISTS public.property_types;
+DROP SEQUENCE IF EXISTS public.property_types_id_seq;
+DROP TABLE IF EXISTS public.property_type;
+DROP SEQUENCE IF EXISTS public.property_type_property_type_id_seq;
+DROP TABLE IF EXISTS public.pending_buyers;
+DROP SEQUENCE IF EXISTS public.pending_buyers_id_seq;
+DROP TABLE IF EXISTS public.migration_mapping_sellers;
+DROP SEQUENCE IF EXISTS public.migration_mapping_sellers_id_seq;
+DROP TABLE IF EXISTS public.migration_mapping_buyers;
+DROP SEQUENCE IF EXISTS public.migration_mapping_buyers_id_seq;
+DROP TABLE IF EXISTS public.migration_log;
+DROP SEQUENCE IF EXISTS public.migration_log_id_seq;
+DROP TABLE IF EXISTS public.meetings;
+DROP SEQUENCE IF EXISTS public.meetings_id_seq;
+DROP TABLE IF EXISTS public.listings;
+DROP SEQUENCE IF EXISTS public.listings_id_seq;
+DROP TABLE IF EXISTS public.listing_dates;
+DROP SEQUENCE IF EXISTS public.listing_dates_id_seq;
+DROP TABLE IF EXISTS public.invited_buyers;
+DROP SEQUENCE IF EXISTS public.invited_buyers_id_seq;
+DROP TABLE IF EXISTS public.interests;
+DROP SEQUENCE IF EXISTS public.interests_id_seq;
+DROP TABLE IF EXISTS public.interest;
+DROP SEQUENCE IF EXISTS public.interest_interest_id_seq;
+DROP TABLE IF EXISTS public.ground_transportation;
+DROP SEQUENCE IF EXISTS public.ground_transportation_id_seq;
+DROP TABLE IF EXISTS public.domain_restrictions;
+DROP SEQUENCE IF EXISTS public.domain_restrictions_id_seq;
+DROP TABLE IF EXISTS public.buyer_references;
+DROP SEQUENCE IF EXISTS public.buyer_references_id_seq;
+DROP TABLE IF EXISTS public.buyer_reference;
+DROP TABLE IF EXISTS public.buyer_profiles;
+DROP SEQUENCE IF EXISTS public.buyer_profiles_id_seq;
+DROP TABLE IF EXISTS public.buyer_profile_interests;
+DROP SEQUENCE IF EXISTS public.buyer_profile_interests_id_seq;
+DROP TABLE IF EXISTS public.buyer_misc;
+DROP TABLE IF EXISTS public.buyer_interest;
+DROP SEQUENCE IF EXISTS public.buyer_interest_interest_number_seq;
+DROP TABLE IF EXISTS public.buyer_financial_info;
+DROP SEQUENCE IF EXISTS public.buyer_financial_info_id_seq;
+DROP TABLE IF EXISTS public.buyer_financial;
+DROP TABLE IF EXISTS public.buyer_demographic;
+DROP TABLE IF EXISTS public.buyer_category;
+DROP SEQUENCE IF EXISTS public.buyer_category_buyer_category_id_seq;
+DROP TABLE IF EXISTS public.buyer_categories;
+DROP SEQUENCE IF EXISTS public.buyer_categories_id_seq;
+DROP TABLE IF EXISTS public.buyer_business_info;
+DROP SEQUENCE IF EXISTS public.buyer_business_info_id_seq;
+DROP TABLE IF EXISTS public.buyer_business;
+DROP TABLE IF EXISTS public.buyer;
+DROP SEQUENCE IF EXISTS public.buyer_buyer_id_seq;
+DROP TABLE IF EXISTS public.accommodations;
+DROP SEQUENCE IF EXISTS public.accommodations_id_seq;
+DROP TYPE IF EXISTS public.user_role;
+DROP TYPE IF EXISTS public.meetingstatus;
+DROP TYPE IF EXISTS public.meeting_status;
+DROP TYPE IF EXISTS public.listingstatus;
+DROP TYPE IF EXISTS public.listing_status;
+--
+-- Name: listing_status; Type: TYPE; Schema: public; Owner: splash25user
+--
+
+CREATE TYPE public.listing_status AS ENUM (
+    'active',
+    'inactive',
+    'pending'
+);
+
+
+ALTER TYPE public.listing_status OWNER TO splash25user;
+
+--
+-- Name: listingstatus; Type: TYPE; Schema: public; Owner: splash25user
+--
+
+CREATE TYPE public.listingstatus AS ENUM (
+    'ACTIVE',
+    'INACTIVE',
+    'PENDING'
+);
+
+
+ALTER TYPE public.listingstatus OWNER TO splash25user;
+
+--
+-- Name: meeting_status; Type: TYPE; Schema: public; Owner: splash25user
+--
+
+CREATE TYPE public.meeting_status AS ENUM (
+    'pending',
+    'accepted',
+    'rejected',
+    'completed',
+    'cancelled'
+);
+
+
+ALTER TYPE public.meeting_status OWNER TO splash25user;
+
+--
+-- Name: meetingstatus; Type: TYPE; Schema: public; Owner: splash25user
+--
+
+CREATE TYPE public.meetingstatus AS ENUM (
+    'PENDING',
+    'ACCEPTED',
+    'REJECTED',
+    'COMPLETED',
+    'CANCELLED'
+);
+
+
+ALTER TYPE public.meetingstatus OWNER TO splash25user;
+
+--
+-- Name: user_role; Type: TYPE; Schema: public; Owner: splash25user
+--
+
+CREATE TYPE public.user_role AS ENUM (
+    'buyer',
+    'seller',
+    'admin'
+);
+
+
+ALTER TYPE public.user_role OWNER TO splash25user;
+
+--
+-- Name: accommodations_id_seq; Type: SEQUENCE; Schema: public; Owner: splash25user
+--
+
+CREATE SEQUENCE public.accommodations_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.accommodations_id_seq OWNER TO splash25user;
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- Name: accommodations; Type: TABLE; Schema: public; Owner: splash25user
+--
+
+CREATE TABLE public.accommodations (
+    id integer DEFAULT nextval('public.accommodations_id_seq'::regclass) NOT NULL,
+    travel_plan_id integer NOT NULL,
+    name character varying(200) NOT NULL,
+    address text NOT NULL,
+    check_in_datetime timestamp without time zone NOT NULL,
+    check_out_datetime timestamp without time zone NOT NULL,
+    room_type character varying(100) NOT NULL,
+    booking_reference character varying(50) NOT NULL,
+    special_notes text
+);
+
+
+ALTER TABLE public.accommodations OWNER TO splash25user;
+
+--
+-- Name: buyer_buyer_id_seq; Type: SEQUENCE; Schema: public; Owner: splash25user
+--
+
+CREATE SEQUENCE public.buyer_buyer_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.buyer_buyer_id_seq OWNER TO splash25user;
+
+--
+-- Name: buyer; Type: TABLE; Schema: public; Owner: splash25user
+--
+
+CREATE TABLE public.buyer (
+    buyer_id integer DEFAULT nextval('public.buyer_buyer_id_seq'::regclass) NOT NULL,
+    salutation character varying(10),
+    first_name character varying(50) NOT NULL,
+    last_name character varying(50) NOT NULL,
+    designation character varying(100),
+    email character varying(100) NOT NULL,
+    category_id integer,
+    status character varying(20) DEFAULT 'Pending'::character varying,
+    vip boolean DEFAULT false
+);
+
+
+ALTER TABLE public.buyer OWNER TO splash25user;
+
+--
+-- Name: buyer_business; Type: TABLE; Schema: public; Owner: splash25user
+--
+
+CREATE TABLE public.buyer_business (
+    buyer_id integer NOT NULL,
+    start_year integer,
+    operator_type character varying(50),
+    property_interest_1 character varying(100),
+    property_interest_2 character varying(100),
+    sell_wayanad boolean DEFAULT true,
+    sell_wayanad_year integer
+);
+
+
+ALTER TABLE public.buyer_business OWNER TO splash25user;
+
+--
+-- Name: buyer_business_info_id_seq; Type: SEQUENCE; Schema: public; Owner: splash25user
+--
+
+CREATE SEQUENCE public.buyer_business_info_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.buyer_business_info_id_seq OWNER TO splash25user;
+
+--
+-- Name: buyer_business_info; Type: TABLE; Schema: public; Owner: splash25user
+--
+
+CREATE TABLE public.buyer_business_info (
+    id integer DEFAULT nextval('public.buyer_business_info_id_seq'::regclass) NOT NULL,
+    buyer_profile_id integer,
+    start_year integer,
+    property_interest_1 character varying(100),
+    property_interest_2 character varying(100),
+    sell_wayanad boolean DEFAULT false,
+    sell_wayanad_year integer,
+    previous_visit boolean DEFAULT false,
+    previous_stay_property character varying(100),
+    why_visit text,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+);
+
+
+ALTER TABLE public.buyer_business_info OWNER TO splash25user;
+
+--
+-- Name: buyer_categories_id_seq; Type: SEQUENCE; Schema: public; Owner: splash25user
+--
+
+CREATE SEQUENCE public.buyer_categories_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.buyer_categories_id_seq OWNER TO splash25user;
+
+--
+-- Name: buyer_categories; Type: TABLE; Schema: public; Owner: splash25user
+--
+
+CREATE TABLE public.buyer_categories (
+    id integer DEFAULT nextval('public.buyer_categories_id_seq'::regclass) NOT NULL,
+    name character varying(100) NOT NULL,
+    deposit_amount numeric(10,2),
+    entry_fee numeric(10,2),
+    accommodation_hosted boolean DEFAULT false,
+    transfers_hosted boolean DEFAULT false,
+    max_meetings integer,
+    min_meetings integer,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+);
+
+
+ALTER TABLE public.buyer_categories OWNER TO splash25user;
+
+--
+-- Name: buyer_category_buyer_category_id_seq; Type: SEQUENCE; Schema: public; Owner: splash25user
+--
+
+CREATE SEQUENCE public.buyer_category_buyer_category_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.buyer_category_buyer_category_id_seq OWNER TO splash25user;
+
+--
+-- Name: buyer_category; Type: TABLE; Schema: public; Owner: splash25user
+--
+
+CREATE TABLE public.buyer_category (
+    buyer_category_id integer DEFAULT nextval('public.buyer_category_buyer_category_id_seq'::regclass) NOT NULL,
+    category_name character varying(100) NOT NULL,
+    deposit_amount numeric(10,2),
+    entry_fee numeric(10,2),
+    accommodation_hosted boolean DEFAULT false,
+    transfers_hosted boolean DEFAULT false,
+    max_meetings integer,
+    min_meetings integer
+);
+
+
+ALTER TABLE public.buyer_category OWNER TO splash25user;
+
+--
+-- Name: buyer_demographic; Type: TABLE; Schema: public; Owner: splash25user
+--
+
+CREATE TABLE public.buyer_demographic (
+    buyer_id integer NOT NULL,
+    mobile character varying(15),
+    address text,
+    city character varying(50),
+    state character varying(50),
+    pincode character varying(10),
+    country character varying(50),
+    instagram character varying(100),
+    company_name character varying(100),
+    gst character varying(20),
+    website character varying(100)
+);
+
+
+ALTER TABLE public.buyer_demographic OWNER TO splash25user;
+
+--
+-- Name: buyer_financial; Type: TABLE; Schema: public; Owner: splash25user
+--
+
+CREATE TABLE public.buyer_financial (
+    buyer_id integer NOT NULL,
+    deposit_paid boolean DEFAULT false,
+    entry_fee_paid boolean DEFAULT false
+);
+
+
+ALTER TABLE public.buyer_financial OWNER TO splash25user;
+
+--
+-- Name: buyer_financial_info_id_seq; Type: SEQUENCE; Schema: public; Owner: splash25user
+--
+
+CREATE SEQUENCE public.buyer_financial_info_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.buyer_financial_info_id_seq OWNER TO splash25user;
+
+--
+-- Name: buyer_financial_info; Type: TABLE; Schema: public; Owner: splash25user
+--
+
+CREATE TABLE public.buyer_financial_info (
+    id integer DEFAULT nextval('public.buyer_financial_info_id_seq'::regclass) NOT NULL,
+    buyer_profile_id integer,
+    deposit_paid boolean DEFAULT false,
+    entry_fee_paid boolean DEFAULT false,
+    deposit_amount numeric(10,2),
+    entry_fee_amount numeric(10,2),
+    payment_date timestamp without time zone,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+);
+
+
+ALTER TABLE public.buyer_financial_info OWNER TO splash25user;
+
+--
+-- Name: buyer_interest_interest_number_seq; Type: SEQUENCE; Schema: public; Owner: splash25user
+--
+
+CREATE SEQUENCE public.buyer_interest_interest_number_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.buyer_interest_interest_number_seq OWNER TO splash25user;
+
+--
+-- Name: buyer_interest; Type: TABLE; Schema: public; Owner: splash25user
+--
+
+CREATE TABLE public.buyer_interest (
+    interest_number integer DEFAULT nextval('public.buyer_interest_interest_number_seq'::regclass) NOT NULL,
+    buyer_id integer,
+    interest_id integer
+);
+
+
+ALTER TABLE public.buyer_interest OWNER TO splash25user;
+
+--
+-- Name: buyer_misc; Type: TABLE; Schema: public; Owner: splash25user
+--
+
+CREATE TABLE public.buyer_misc (
+    buyer_id integer NOT NULL,
+    previous_visit boolean DEFAULT false,
+    previous_stay_property character varying(100),
+    why_visit text
+);
+
+
+ALTER TABLE public.buyer_misc OWNER TO splash25user;
+
+--
+-- Name: buyer_profile_interests_id_seq; Type: SEQUENCE; Schema: public; Owner: splash25user
+--
+
+CREATE SEQUENCE public.buyer_profile_interests_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.buyer_profile_interests_id_seq OWNER TO splash25user;
+
+--
+-- Name: buyer_profile_interests; Type: TABLE; Schema: public; Owner: splash25user
+--
+
+CREATE TABLE public.buyer_profile_interests (
+    id integer DEFAULT nextval('public.buyer_profile_interests_id_seq'::regclass) NOT NULL,
+    buyer_profile_id integer,
+    interest_id integer,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+);
+
+
+ALTER TABLE public.buyer_profile_interests OWNER TO splash25user;
+
+--
+-- Name: buyer_profiles_id_seq; Type: SEQUENCE; Schema: public; Owner: splash25user
+--
+
+CREATE SEQUENCE public.buyer_profiles_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.buyer_profiles_id_seq OWNER TO splash25user;
+
+--
+-- Name: buyer_profiles; Type: TABLE; Schema: public; Owner: splash25user
+--
+
+CREATE TABLE public.buyer_profiles (
+    id integer DEFAULT nextval('public.buyer_profiles_id_seq'::regclass) NOT NULL,
+    user_id integer NOT NULL,
+    name character varying(100) NOT NULL,
+    organization character varying(100) NOT NULL,
+    designation character varying(50),
+    operator_type character varying(50),
+    interests jsonb,
+    properties_of_interest jsonb,
+    country character varying(50),
+    state character varying(50),
+    city character varying(50),
+    address text,
+    mobile character varying(20),
+    website character varying(255),
+    instagram character varying(100),
+    year_of_starting_business integer,
+    selling_wayanad boolean DEFAULT false,
+    since_when integer,
+    bio text,
+    profile_image character varying(255),
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp without time zone,
+    category_id integer,
+    salutation character varying(10),
+    first_name character varying(50),
+    last_name character varying(50),
+    vip boolean DEFAULT false,
+    status character varying(20) DEFAULT 'pending'::character varying,
+    gst character varying(20),
+    pincode character varying(10)
+);
+
+
+ALTER TABLE public.buyer_profiles OWNER TO splash25user;
+
+--
+-- Name: buyer_reference; Type: TABLE; Schema: public; Owner: splash25user
+--
+
+CREATE TABLE public.buyer_reference (
+    buyer_id integer NOT NULL,
+    ref1_name character varying(100),
+    ref1_addr text,
+    ref2_name character varying(100),
+    ref2_addr text
+);
+
+
+ALTER TABLE public.buyer_reference OWNER TO splash25user;
+
+--
+-- Name: buyer_references_id_seq; Type: SEQUENCE; Schema: public; Owner: splash25user
+--
+
+CREATE SEQUENCE public.buyer_references_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.buyer_references_id_seq OWNER TO splash25user;
+
+--
+-- Name: buyer_references; Type: TABLE; Schema: public; Owner: splash25user
+--
+
+CREATE TABLE public.buyer_references (
+    id integer DEFAULT nextval('public.buyer_references_id_seq'::regclass) NOT NULL,
+    buyer_profile_id integer,
+    ref1_name character varying(100),
+    ref1_address text,
+    ref2_name character varying(100),
+    ref2_address text,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+);
+
+
+ALTER TABLE public.buyer_references OWNER TO splash25user;
+
+--
+-- Name: domain_restrictions_id_seq; Type: SEQUENCE; Schema: public; Owner: splash25user
+--
+
+CREATE SEQUENCE public.domain_restrictions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.domain_restrictions_id_seq OWNER TO splash25user;
+
+--
+-- Name: domain_restrictions; Type: TABLE; Schema: public; Owner: splash25user
+--
+
+CREATE TABLE public.domain_restrictions (
+    id integer DEFAULT nextval('public.domain_restrictions_id_seq'::regclass) NOT NULL,
+    domain character varying(100) NOT NULL,
+    is_enabled boolean DEFAULT true,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+);
+
+
+ALTER TABLE public.domain_restrictions OWNER TO splash25user;
+
+--
+-- Name: ground_transportation_id_seq; Type: SEQUENCE; Schema: public; Owner: splash25user
+--
+
+CREATE SEQUENCE public.ground_transportation_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.ground_transportation_id_seq OWNER TO splash25user;
+
+--
+-- Name: ground_transportation; Type: TABLE; Schema: public; Owner: splash25user
+--
+
+CREATE TABLE public.ground_transportation (
+    id integer DEFAULT nextval('public.ground_transportation_id_seq'::regclass) NOT NULL,
+    travel_plan_id integer NOT NULL,
+    pickup_location character varying(200) NOT NULL,
+    pickup_datetime timestamp without time zone NOT NULL,
+    pickup_vehicle_type character varying(50),
+    pickup_driver_contact character varying(50),
+    dropoff_location character varying(200) NOT NULL,
+    dropoff_datetime timestamp without time zone NOT NULL,
+    dropoff_vehicle_type character varying(50),
+    dropoff_driver_contact character varying(50)
+);
+
+
+ALTER TABLE public.ground_transportation OWNER TO splash25user;
+
+--
+-- Name: interest_interest_id_seq; Type: SEQUENCE; Schema: public; Owner: splash25user
+--
+
+CREATE SEQUENCE public.interest_interest_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.interest_interest_id_seq OWNER TO splash25user;
+
+--
+-- Name: interest; Type: TABLE; Schema: public; Owner: splash25user
+--
+
+CREATE TABLE public.interest (
+    interest_id integer DEFAULT nextval('public.interest_interest_id_seq'::regclass) NOT NULL,
+    interest_name character varying(100) NOT NULL
+);
+
+
+ALTER TABLE public.interest OWNER TO splash25user;
+
+--
+-- Name: interests_id_seq; Type: SEQUENCE; Schema: public; Owner: splash25user
+--
+
+CREATE SEQUENCE public.interests_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.interests_id_seq OWNER TO splash25user;
+
+--
+-- Name: interests; Type: TABLE; Schema: public; Owner: splash25user
+--
+
+CREATE TABLE public.interests (
+    id integer DEFAULT nextval('public.interests_id_seq'::regclass) NOT NULL,
+    name character varying(100) NOT NULL,
+    description text,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+);
+
+
+ALTER TABLE public.interests OWNER TO splash25user;
+
+--
+-- Name: invited_buyers_id_seq; Type: SEQUENCE; Schema: public; Owner: splash25user
+--
+
+CREATE SEQUENCE public.invited_buyers_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.invited_buyers_id_seq OWNER TO splash25user;
+
+--
+-- Name: invited_buyers; Type: TABLE; Schema: public; Owner: splash25user
+--
+
+CREATE TABLE public.invited_buyers (
+    id integer DEFAULT nextval('public.invited_buyers_id_seq'::regclass) NOT NULL,
+    name character varying(100) NOT NULL,
+    email character varying(120) NOT NULL,
+    invitation_token character varying(255) NOT NULL,
+    is_registered boolean DEFAULT false,
+    invited_by integer NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    expires_at timestamp without time zone NOT NULL
+);
+
+
+ALTER TABLE public.invited_buyers OWNER TO splash25user;
+
+--
+-- Name: listing_dates_id_seq; Type: SEQUENCE; Schema: public; Owner: splash25user
+--
+
+CREATE SEQUENCE public.listing_dates_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.listing_dates_id_seq OWNER TO splash25user;
+
+--
+-- Name: listing_dates; Type: TABLE; Schema: public; Owner: splash25user
+--
+
+CREATE TABLE public.listing_dates (
+    id integer DEFAULT nextval('public.listing_dates_id_seq'::regclass) NOT NULL,
+    listing_id integer NOT NULL,
+    date date NOT NULL
+);
+
+
+ALTER TABLE public.listing_dates OWNER TO splash25user;
+
+--
+-- Name: listings_id_seq; Type: SEQUENCE; Schema: public; Owner: splash25user
+--
+
+CREATE SEQUENCE public.listings_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.listings_id_seq OWNER TO splash25user;
+
+--
+-- Name: listings; Type: TABLE; Schema: public; Owner: splash25user
+--
+
+CREATE TABLE public.listings (
+    id integer DEFAULT nextval('public.listings_id_seq'::regclass) NOT NULL,
+    seller_id integer NOT NULL,
+    name character varying(200) NOT NULL,
+    description text NOT NULL,
+    price numeric(10,2) NOT NULL,
+    duration character varying(50) NOT NULL,
+    location character varying(200) NOT NULL,
+    max_participants integer NOT NULL,
+    status character varying(8) DEFAULT 'active'::public.listing_status NOT NULL,
+    image_url character varying(255),
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    views integer DEFAULT 0,
+    bookings integer DEFAULT 0
+);
+
+
+ALTER TABLE public.listings OWNER TO splash25user;
+
+--
+-- Name: meetings_id_seq; Type: SEQUENCE; Schema: public; Owner: splash25user
+--
+
+CREATE SEQUENCE public.meetings_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.meetings_id_seq OWNER TO splash25user;
+
+--
+-- Name: meetings; Type: TABLE; Schema: public; Owner: splash25user
+--
+
+CREATE TABLE public.meetings (
+    id integer DEFAULT nextval('public.meetings_id_seq'::regclass) NOT NULL,
+    buyer_id integer NOT NULL,
+    seller_id integer NOT NULL,
+    time_slot_id integer,
+    notes text,
+    status character varying(9) DEFAULT 'pending'::public.meeting_status NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp without time zone,
+    attendee_id integer,
+    meeting_date date,
+    meeting_time time without time zone,
+    requestor_id integer
+);
+
+
+ALTER TABLE public.meetings OWNER TO splash25user;
+
+--
+-- Name: migration_log_id_seq; Type: SEQUENCE; Schema: public; Owner: splash25user
+--
+
+CREATE SEQUENCE public.migration_log_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.migration_log_id_seq OWNER TO splash25user;
+
+--
+-- Name: migration_log; Type: TABLE; Schema: public; Owner: splash25user
+--
+
+CREATE TABLE public.migration_log (
+    id integer DEFAULT nextval('public.migration_log_id_seq'::regclass) NOT NULL,
+    step_name character varying(100) NOT NULL,
+    status character varying(20) NOT NULL,
+    message text,
+    started_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    completed_at timestamp without time zone,
+    duration_seconds integer
+);
+
+
+ALTER TABLE public.migration_log OWNER TO splash25user;
+
+--
+-- Name: migration_mapping_buyers_id_seq; Type: SEQUENCE; Schema: public; Owner: splash25user
+--
+
+CREATE SEQUENCE public.migration_mapping_buyers_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.migration_mapping_buyers_id_seq OWNER TO splash25user;
+
+--
+-- Name: migration_mapping_buyers; Type: TABLE; Schema: public; Owner: splash25user
+--
+
+CREATE TABLE public.migration_mapping_buyers (
+    id integer DEFAULT nextval('public.migration_mapping_buyers_id_seq'::regclass) NOT NULL,
+    customer_buyer_id integer,
+    splash25_user_id integer,
+    splash25_buyer_profile_id integer,
+    migration_status character varying(20) DEFAULT 'pending'::character varying,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+);
+
+
+ALTER TABLE public.migration_mapping_buyers OWNER TO splash25user;
+
+--
+-- Name: migration_mapping_sellers_id_seq; Type: SEQUENCE; Schema: public; Owner: splash25user
+--
+
+CREATE SEQUENCE public.migration_mapping_sellers_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.migration_mapping_sellers_id_seq OWNER TO splash25user;
+
+--
+-- Name: migration_mapping_sellers; Type: TABLE; Schema: public; Owner: splash25user
+--
+
+CREATE TABLE public.migration_mapping_sellers (
+    id integer DEFAULT nextval('public.migration_mapping_sellers_id_seq'::regclass) NOT NULL,
+    customer_seller_id integer,
+    splash25_user_id integer,
+    splash25_seller_profile_id integer,
+    migration_status character varying(20) DEFAULT 'pending'::character varying,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+);
+
+
+ALTER TABLE public.migration_mapping_sellers OWNER TO splash25user;
+
+--
+-- Name: pending_buyers_id_seq; Type: SEQUENCE; Schema: public; Owner: splash25user
+--
+
+CREATE SEQUENCE public.pending_buyers_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.pending_buyers_id_seq OWNER TO splash25user;
+
+--
+-- Name: pending_buyers; Type: TABLE; Schema: public; Owner: splash25user
+--
+
+CREATE TABLE public.pending_buyers (
+    id integer DEFAULT nextval('public.pending_buyers_id_seq'::regclass) NOT NULL,
+    invited_buyer_id integer NOT NULL,
+    name character varying(100) NOT NULL,
+    designation character varying(30) NOT NULL,
+    company character varying(100) NOT NULL,
+    gst character varying(15),
+    address character varying(150) NOT NULL,
+    city character varying(30) NOT NULL,
+    state character varying(30) NOT NULL,
+    pin character varying(10) NOT NULL,
+    mobile character varying(15) NOT NULL,
+    email character varying(120) NOT NULL,
+    website character varying(100),
+    instagram character varying(30),
+    year_of_starting_business integer NOT NULL,
+    type_of_operator character varying(20) NOT NULL,
+    already_sell_wayanad character varying(3) NOT NULL,
+    since_when integer,
+    opinion_about_previous_splash character varying(50) NOT NULL,
+    property_stayed_in character varying(100),
+    reference_property1_name character varying(100) NOT NULL,
+    reference_property1_address character varying(200) NOT NULL,
+    reference_property2_name character varying(100),
+    reference_property2_address character varying(200),
+    interests character varying(255) NOT NULL,
+    properties_of_interest character varying(100) NOT NULL,
+    why_attend_splash2025 text NOT NULL,
+    status character varying(20) DEFAULT 'pending'::character varying,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+);
+
+
+ALTER TABLE public.pending_buyers OWNER TO splash25user;
+
+--
+-- Name: property_type_property_type_id_seq; Type: SEQUENCE; Schema: public; Owner: splash25user
+--
+
+CREATE SEQUENCE public.property_type_property_type_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.property_type_property_type_id_seq OWNER TO splash25user;
+
+--
+-- Name: property_type; Type: TABLE; Schema: public; Owner: splash25user
+--
+
+CREATE TABLE public.property_type (
+    property_type_id integer DEFAULT nextval('public.property_type_property_type_id_seq'::regclass) NOT NULL,
+    property_type_name character varying(100) NOT NULL
+);
+
+
+ALTER TABLE public.property_type OWNER TO splash25user;
+
+--
+-- Name: property_types_id_seq; Type: SEQUENCE; Schema: public; Owner: splash25user
+--
+
+CREATE SEQUENCE public.property_types_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.property_types_id_seq OWNER TO splash25user;
+
+--
+-- Name: property_types; Type: TABLE; Schema: public; Owner: splash25user
+--
+
+CREATE TABLE public.property_types (
+    id integer DEFAULT nextval('public.property_types_id_seq'::regclass) NOT NULL,
+    name character varying(100) NOT NULL,
+    description text,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+);
+
+
+ALTER TABLE public.property_types OWNER TO splash25user;
+
+--
+-- Name: seller_seller_id_seq; Type: SEQUENCE; Schema: public; Owner: splash25user
+--
+
+CREATE SEQUENCE public.seller_seller_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.seller_seller_id_seq OWNER TO splash25user;
+
+--
+-- Name: seller; Type: TABLE; Schema: public; Owner: splash25user
+--
+
+CREATE TABLE public.seller (
+    seller_id integer DEFAULT nextval('public.seller_seller_id_seq'::regclass) NOT NULL,
+    company_name character varying(100),
+    address text,
+    city character varying(50),
+    state character varying(50),
+    pincode character varying(10),
+    country character varying(50),
+    instagram character varying(100),
+    gst character varying(20),
+    website character varying(100),
+    status character varying(20) DEFAULT 'Active'::character varying,
+    assn_member boolean DEFAULT false
+);
+
+
+ALTER TABLE public.seller OWNER TO splash25user;
+
+--
+-- Name: seller_attendees_id_seq; Type: SEQUENCE; Schema: public; Owner: splash25user
+--
+
+CREATE SEQUENCE public.seller_attendees_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.seller_attendees_id_seq OWNER TO splash25user;
+
+--
+-- Name: seller_attendees; Type: TABLE; Schema: public; Owner: splash25user
+--
+
+CREATE TABLE public.seller_attendees (
+    id integer DEFAULT nextval('public.seller_attendees_id_seq'::regclass) NOT NULL,
+    seller_profile_id integer,
+    attendee_number integer,
+    name character varying(100),
+    designation character varying(100),
+    email character varying(100),
+    mobile character varying(15),
+    is_primary_contact boolean DEFAULT false,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+);
+
+
+ALTER TABLE public.seller_attendees OWNER TO splash25user;
+
+--
+-- Name: seller_business; Type: TABLE; Schema: public; Owner: splash25user
+--
+
+CREATE TABLE public.seller_business (
+    seller_id integer NOT NULL,
+    start_year integer,
+    seller_type integer,
+    number_of_rooms integer,
+    previous_business boolean DEFAULT true,
+    previous_business_year integer
+);
+
+
+ALTER TABLE public.seller_business OWNER TO splash25user;
+
+--
+-- Name: seller_business_info_id_seq; Type: SEQUENCE; Schema: public; Owner: splash25user
+--
+
+CREATE SEQUENCE public.seller_business_info_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.seller_business_info_id_seq OWNER TO splash25user;
+
+--
+-- Name: seller_business_info; Type: TABLE; Schema: public; Owner: splash25user
+--
+
+CREATE TABLE public.seller_business_info (
+    id integer DEFAULT nextval('public.seller_business_info_id_seq'::regclass) NOT NULL,
+    seller_profile_id integer,
+    start_year integer,
+    number_of_rooms integer,
+    previous_business boolean DEFAULT false,
+    previous_business_year integer,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+);
+
+ALTER TABLE public.seller_business_info ALTER COLUMN start_year TYPE BIGINT;
+ALTER TABLE public.seller_business_info ALTER COLUMN previous_business_year TYPE BIGINT;
+ALTER TABLE public.seller_business_info OWNER TO splash25user;
+
+--
+-- Name: seller_financial; Type: TABLE; Schema: public; Owner: splash25user
+--
+
+CREATE TABLE public.seller_financial (
+    seller_id integer NOT NULL,
+    deposit_paid boolean DEFAULT false,
+    total_amt_due numeric(10,2),
+    total_amt_paid numeric(10,2),
+    subscription_uptodate boolean DEFAULT false
+);
+
+
+ALTER TABLE public.seller_financial OWNER TO splash25user;
+
+--
+-- Name: seller_financial_info_id_seq; Type: SEQUENCE; Schema: public; Owner: splash25user
+--
+
+CREATE SEQUENCE public.seller_financial_info_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.seller_financial_info_id_seq OWNER TO splash25user;
+
+--
+-- Name: seller_financial_info; Type: TABLE; Schema: public; Owner: splash25user
+--
+
+CREATE TABLE public.seller_financial_info (
+    id integer DEFAULT nextval('public.seller_financial_info_id_seq'::regclass) NOT NULL,
+    seller_profile_id integer,
+    deposit_paid boolean DEFAULT false,
+    total_amt_due numeric(10,2),
+    total_amt_paid numeric(10,2),
+    subscription_uptodate boolean DEFAULT false,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+);
+
+
+ALTER TABLE public.seller_financial_info OWNER TO splash25user;
+
+--
+-- Name: seller_primary_contact; Type: TABLE; Schema: public; Owner: splash25user
+--
+
+CREATE TABLE public.seller_primary_contact (
+    seller_id integer NOT NULL,
+    salutation character varying(10),
+    first_name character varying(50) NOT NULL,
+    last_name character varying(50) NOT NULL,
+    designation character varying(100),
+    mobile character varying(15),
+    email character varying(100) NOT NULL
+);
+
+
+ALTER TABLE public.seller_primary_contact OWNER TO splash25user;
+
+--
+-- Name: seller_profiles_id_seq; Type: SEQUENCE; Schema: public; Owner: splash25user
+--
+
+CREATE SEQUENCE public.seller_profiles_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.seller_profiles_id_seq OWNER TO splash25user;
+
+--
+-- Name: seller_profiles; Type: TABLE; Schema: public; Owner: splash25user
+--
+
+CREATE TABLE public.seller_profiles (
+    id integer DEFAULT nextval('public.seller_profiles_id_seq'::regclass) NOT NULL,
+    user_id integer NOT NULL,
+    business_name character varying(100) NOT NULL,
+    description text,
+    seller_type character varying(50),
+    target_market character varying(200),
+    logo_url character varying(255),
+    website character varying(255),
+    contact_email character varying(100),
+    contact_phone character varying(20),
+    address text,
+    is_verified boolean DEFAULT false,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp without time zone,
+    gst character varying(20),
+    pincode character varying(10),
+    instagram character varying(100),
+    status character varying(20) DEFAULT 'active'::character varying,
+    assn_member boolean DEFAULT false,
+    property_type_id integer,
+    state character varying(100),
+    country character varying(50),
+    business_images jsonb DEFAULT '[]'::jsonb
+);
+
+-- Alter seller_profiles table to increase varchar field lengths
+ALTER TABLE public.seller_profiles ALTER COLUMN seller_type TYPE VARCHAR(200);
+ALTER TABLE public.seller_profiles ALTER COLUMN target_market TYPE VARCHAR(200);
+ALTER TABLE public.seller_profiles OWNER TO splash25user;
+
+--
+-- Name: COLUMN seller_profiles.business_images; Type: COMMENT; Schema: public; Owner: splash25user
+--
+
+COMMENT ON COLUMN public.seller_profiles.business_images IS 'JSONB array storing business image metadata including URLs, filenames, sizes, and upload timestamps';
+
+
+--
+-- Name: seller_reference; Type: TABLE; Schema: public; Owner: splash25user
+--
+
+CREATE TABLE public.seller_reference (
+    seller_id integer NOT NULL,
+    ref1_name character varying(100),
+    ref1_addr text,
+    ref2_name character varying(100),
+    ref2_addr text
+);
+
+
+ALTER TABLE public.seller_reference OWNER TO splash25user;
+
+--
+-- Name: seller_references_id_seq; Type: SEQUENCE; Schema: public; Owner: splash25user
+--
+
+CREATE SEQUENCE public.seller_references_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.seller_references_id_seq OWNER TO splash25user;
+
+--
+-- Name: seller_references; Type: TABLE; Schema: public; Owner: splash25user
+--
+
+CREATE TABLE public.seller_references (
+    id integer DEFAULT nextval('public.seller_references_id_seq'::regclass) NOT NULL,
+    seller_profile_id integer,
+    ref1_name character varying(100),
+    ref1_address text,
+    ref2_name character varying(100),
+    ref2_address text,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+);
+
+
+ALTER TABLE public.seller_references OWNER TO splash25user;
+
+--
+-- Name: seller_stall_seller_stall_id_seq; Type: SEQUENCE; Schema: public; Owner: splash25user
+--
+
+CREATE SEQUENCE public.seller_stall_seller_stall_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.seller_stall_seller_stall_id_seq OWNER TO splash25user;
+
+--
+-- Name: seller_stall; Type: TABLE; Schema: public; Owner: splash25user
+--
+
+CREATE TABLE public.seller_stall (
+    seller_stall_id integer DEFAULT nextval('public.seller_stall_seller_stall_id_seq'::regclass) NOT NULL,
+    seller_id integer,
+    stall_type_id integer,
+    allocated_stall_number character varying(15),
+    fascia_name character varying(100),
+    microsite_url character varying(100)
+);
+
+
+ALTER TABLE public.seller_stall OWNER TO splash25user;
+
+--
+-- Name: seller_target_market_target_market_number_seq; Type: SEQUENCE; Schema: public; Owner: splash25user
+--
+
+CREATE SEQUENCE public.seller_target_market_target_market_number_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.seller_target_market_target_market_number_seq OWNER TO splash25user;
+
+--
+-- Name: seller_target_market; Type: TABLE; Schema: public; Owner: splash25user
+--
+
+CREATE TABLE public.seller_target_market (
+    target_market_number integer DEFAULT nextval('public.seller_target_market_target_market_number_seq'::regclass) NOT NULL,
+    seller_id integer,
+    target_market_id integer
+);
+
+
+ALTER TABLE public.seller_target_market OWNER TO splash25user;
+
+--
+-- Name: seller_target_markets_id_seq; Type: SEQUENCE; Schema: public; Owner: splash25user
+--
+
+CREATE SEQUENCE public.seller_target_markets_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.seller_target_markets_id_seq OWNER TO splash25user;
+
+--
+-- Name: seller_target_markets; Type: TABLE; Schema: public; Owner: splash25user
+--
+
+CREATE TABLE public.seller_target_markets (
+    id integer DEFAULT nextval('public.seller_target_markets_id_seq'::regclass) NOT NULL,
+    seller_profile_id integer,
+    interest_id integer,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+);
+
+
+ALTER TABLE public.seller_target_markets OWNER TO splash25user;
+
+--
+-- Name: stall_database_stall_number_id_seq; Type: SEQUENCE; Schema: public; Owner: splash25user
+--
+
+CREATE SEQUENCE public.stall_database_stall_number_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.stall_database_stall_number_id_seq OWNER TO splash25user;
+
+--
+-- Name: stall_database; Type: TABLE; Schema: public; Owner: splash25user
+--
+
+CREATE TABLE public.stall_database (
+    stall_number_id integer DEFAULT nextval('public.stall_database_stall_number_id_seq'::regclass) NOT NULL,
+    stall_number character varying(15),
+    stall_type_id integer
+);
+
+
+ALTER TABLE public.stall_database OWNER TO splash25user;
+
+--
+-- Name: stall_inventory_id_seq; Type: SEQUENCE; Schema: public; Owner: splash25user
+--
+
+CREATE SEQUENCE public.stall_inventory_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.stall_inventory_id_seq OWNER TO splash25user;
+
+--
+-- Name: stall_inventory; Type: TABLE; Schema: public; Owner: splash25user
+--
+
+CREATE TABLE public.stall_inventory (
+    id integer DEFAULT nextval('public.stall_inventory_id_seq'::regclass) NOT NULL,
+    stall_number character varying(15) NOT NULL,
+    stall_type_id integer,
+    is_allocated boolean DEFAULT false,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+);
+
+
+ALTER TABLE public.stall_inventory OWNER TO splash25user;
+
+--
+-- Name: stall_types_id_seq; Type: SEQUENCE; Schema: public; Owner: splash25user
+--
+
+CREATE SEQUENCE public.stall_types_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.stall_types_id_seq OWNER TO splash25user;
+
+--
+-- Name: stall_types; Type: TABLE; Schema: public; Owner: splash25user
+--
+
+CREATE TABLE public.stall_types (
+    id integer DEFAULT nextval('public.stall_types_id_seq'::regclass) NOT NULL,
+    name character varying(50) NOT NULL,
+    price numeric(10,2),
+    attendees integer,
+    max_meetings_per_attendee integer,
+    min_meetings_per_attendee integer,
+    size character varying(50),
+    saleable boolean DEFAULT true,
+    inclusions text,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    dinner_passes integer DEFAULT 1,
+    max_additional_seller_passes integer DEFAULT 1,
+    price_per_additional_pass integer DEFAULT 3500
+);
+
+
+ALTER TABLE public.stall_types OWNER TO splash25user;
+
+--
+-- Name: stalls_id_seq; Type: SEQUENCE; Schema: public; Owner: splash25user
+--
+
+CREATE SEQUENCE public.stalls_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.stalls_id_seq OWNER TO splash25user;
+
+--
+-- Name: stalls; Type: TABLE; Schema: public; Owner: splash25user
+--
+
+CREATE TABLE public.stalls (
+    id integer DEFAULT nextval('public.stalls_id_seq'::regclass) NOT NULL,
+    seller_id integer NOT NULL,
+    number character varying(20) NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp without time zone,
+    stall_type_id integer,
+    allocated_stall_number character varying(15),
+    fascia_name character varying(100),
+    is_allocated boolean DEFAULT false
+);
+
+
+ALTER TABLE public.stalls OWNER TO splash25user;
+
+--
+-- Name: system_settings_id_seq; Type: SEQUENCE; Schema: public; Owner: splash25user
+--
+
+CREATE SEQUENCE public.system_settings_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.system_settings_id_seq OWNER TO splash25user;
+
+--
+-- Name: system_settings; Type: TABLE; Schema: public; Owner: splash25user
+--
+
+CREATE TABLE public.system_settings (
+    id integer DEFAULT nextval('public.system_settings_id_seq'::regclass) NOT NULL,
+    key character varying(50) NOT NULL,
+    value character varying(255),
+    description character varying(255),
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp without time zone
+);
+
+
+ALTER TABLE public.system_settings OWNER TO splash25user;
+
+--
+-- Name: time_slots_id_seq; Type: SEQUENCE; Schema: public; Owner: splash25user
+--
+
+CREATE SEQUENCE public.time_slots_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.time_slots_id_seq OWNER TO splash25user;
+
+--
+-- Name: time_slots; Type: TABLE; Schema: public; Owner: splash25user
+--
+
+CREATE TABLE public.time_slots (
+    id integer DEFAULT nextval('public.time_slots_id_seq'::regclass) NOT NULL,
+    user_id integer NOT NULL,
+    start_time timestamp without time zone NOT NULL,
+    end_time timestamp without time zone NOT NULL,
+    is_available boolean DEFAULT true,
+    meeting_id integer,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+);
+
+
+ALTER TABLE public.time_slots OWNER TO splash25user;
+
+--
+-- Name: transportation_id_seq; Type: SEQUENCE; Schema: public; Owner: splash25user
+--
+
+CREATE SEQUENCE public.transportation_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.transportation_id_seq OWNER TO splash25user;
+
+--
+-- Name: transportation; Type: TABLE; Schema: public; Owner: splash25user
+--
+
+CREATE TABLE public.transportation (
+    id integer DEFAULT nextval('public.transportation_id_seq'::regclass) NOT NULL,
+    travel_plan_id integer NOT NULL,
+    type character varying(20) NOT NULL,
+    outbound_carrier character varying(100) NOT NULL,
+    outbound_number character varying(20) NOT NULL,
+    outbound_departure_location character varying(200) NOT NULL,
+    outbound_departure_datetime timestamp without time zone NOT NULL,
+    outbound_arrival_location character varying(200) NOT NULL,
+    outbound_arrival_datetime timestamp without time zone NOT NULL,
+    outbound_booking_reference character varying(50) NOT NULL,
+    outbound_seat_info character varying(50),
+    return_carrier character varying(100) NOT NULL,
+    return_number character varying(20) NOT NULL,
+    return_departure_location character varying(200) NOT NULL,
+    return_departure_datetime timestamp without time zone NOT NULL,
+    return_arrival_location character varying(200) NOT NULL,
+    return_arrival_datetime timestamp without time zone NOT NULL,
+    return_booking_reference character varying(50) NOT NULL,
+    return_seat_info character varying(50),
+    outbound_type character varying(20),
+    return_type character varying(20)
+);
+
+
+ALTER TABLE public.transportation OWNER TO splash25user;
+
+--
+-- Name: COLUMN transportation.outbound_type; Type: COMMENT; Schema: public; Owner: splash25user
+--
+
+COMMENT ON COLUMN public.transportation.outbound_type IS 'Individual transportation type for outbound journey (can be different from main type)';
+
+
+--
+-- Name: COLUMN transportation.return_type; Type: COMMENT; Schema: public; Owner: splash25user
+--
+
+COMMENT ON COLUMN public.transportation.return_type IS 'Individual transportation type for return journey (can be different from main type)';
+
+
+--
+-- Name: travel_plans_id_seq; Type: SEQUENCE; Schema: public; Owner: splash25user
+--
+
+CREATE SEQUENCE public.travel_plans_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.travel_plans_id_seq OWNER TO splash25user;
+
+--
+-- Name: travel_plans; Type: TABLE; Schema: public; Owner: splash25user
+--
+
+CREATE TABLE public.travel_plans (
+    id integer DEFAULT nextval('public.travel_plans_id_seq'::regclass) NOT NULL,
+    user_id integer NOT NULL,
+    event_name character varying(120) NOT NULL,
+    event_start_date date NOT NULL,
+    event_end_date date NOT NULL,
+    venue character varying(200) NOT NULL,
+    status character varying(20) NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+);
+
+
+ALTER TABLE public.travel_plans OWNER TO splash25user;
+
+--
+-- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: splash25user
+--
+
+CREATE SEQUENCE public.users_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.users_id_seq OWNER TO splash25user;
+
+--
+-- Name: users; Type: TABLE; Schema: public; Owner: splash25user
+--
+
+CREATE TABLE public.users (
+    id integer DEFAULT nextval('public.users_id_seq'::regclass) NOT NULL,
+    username character varying(80) NOT NULL,
+    email character varying(120) NOT NULL,
+    password_hash character varying(128) NOT NULL,
+    role character varying(6) DEFAULT 'buyer'::public.user_role NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    business_name character varying(120),
+    business_description text,
+    is_verified boolean DEFAULT false
+);
+
+
+ALTER TABLE public.users OWNER TO splash25user;
+
+--
+-- Name: accommodations accommodations_pkey; Type: CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.accommodations
+    ADD CONSTRAINT accommodations_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: buyer_business_info buyer_business_info_pkey; Type: CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.buyer_business_info
+    ADD CONSTRAINT buyer_business_info_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: buyer_business buyer_business_pkey; Type: CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.buyer_business
+    ADD CONSTRAINT buyer_business_pkey PRIMARY KEY (buyer_id);
+
+
+--
+-- Name: buyer_categories buyer_categories_pkey; Type: CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.buyer_categories
+    ADD CONSTRAINT buyer_categories_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: buyer_category buyer_category_pkey; Type: CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.buyer_category
+    ADD CONSTRAINT buyer_category_pkey PRIMARY KEY (buyer_category_id);
+
+
+--
+-- Name: buyer_demographic buyer_demographic_pkey; Type: CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.buyer_demographic
+    ADD CONSTRAINT buyer_demographic_pkey PRIMARY KEY (buyer_id);
+
+
+--
+-- Name: buyer_financial_info buyer_financial_info_pkey; Type: CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.buyer_financial_info
+    ADD CONSTRAINT buyer_financial_info_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: buyer_financial buyer_financial_pkey; Type: CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.buyer_financial
+    ADD CONSTRAINT buyer_financial_pkey PRIMARY KEY (buyer_id);
+
+
+--
+-- Name: buyer_interest buyer_interest_pkey; Type: CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.buyer_interest
+    ADD CONSTRAINT buyer_interest_pkey PRIMARY KEY (interest_number);
+
+
+--
+-- Name: buyer_misc buyer_misc_pkey; Type: CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.buyer_misc
+    ADD CONSTRAINT buyer_misc_pkey PRIMARY KEY (buyer_id);
+
+
+--
+-- Name: buyer buyer_pkey; Type: CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.buyer
+    ADD CONSTRAINT buyer_pkey PRIMARY KEY (buyer_id);
+
+
+--
+-- Name: buyer_profile_interests buyer_profile_interests_pkey; Type: CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.buyer_profile_interests
+    ADD CONSTRAINT buyer_profile_interests_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: buyer_profiles buyer_profiles_pkey; Type: CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.buyer_profiles
+    ADD CONSTRAINT buyer_profiles_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: buyer_reference buyer_reference_pkey; Type: CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.buyer_reference
+    ADD CONSTRAINT buyer_reference_pkey PRIMARY KEY (buyer_id);
+
+
+--
+-- Name: buyer_references buyer_references_pkey; Type: CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.buyer_references
+    ADD CONSTRAINT buyer_references_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: domain_restrictions domain_restrictions_pkey; Type: CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.domain_restrictions
+    ADD CONSTRAINT domain_restrictions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: ground_transportation ground_transportation_pkey; Type: CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.ground_transportation
+    ADD CONSTRAINT ground_transportation_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: interest interest_pkey; Type: CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.interest
+    ADD CONSTRAINT interest_pkey PRIMARY KEY (interest_id);
+
+
+--
+-- Name: interests interests_pkey; Type: CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.interests
+    ADD CONSTRAINT interests_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: invited_buyers invited_buyers_pkey; Type: CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.invited_buyers
+    ADD CONSTRAINT invited_buyers_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: listing_dates listing_dates_pkey; Type: CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.listing_dates
+    ADD CONSTRAINT listing_dates_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: listings listings_pkey; Type: CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.listings
+    ADD CONSTRAINT listings_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: meetings meetings_pkey; Type: CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.meetings
+    ADD CONSTRAINT meetings_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: migration_log migration_log_pkey; Type: CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.migration_log
+    ADD CONSTRAINT migration_log_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: migration_mapping_buyers migration_mapping_buyers_pkey; Type: CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.migration_mapping_buyers
+    ADD CONSTRAINT migration_mapping_buyers_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: migration_mapping_sellers migration_mapping_sellers_pkey; Type: CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.migration_mapping_sellers
+    ADD CONSTRAINT migration_mapping_sellers_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: pending_buyers pending_buyers_pkey; Type: CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.pending_buyers
+    ADD CONSTRAINT pending_buyers_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: property_type property_type_pkey; Type: CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.property_type
+    ADD CONSTRAINT property_type_pkey PRIMARY KEY (property_type_id);
+
+
+--
+-- Name: property_types property_types_pkey; Type: CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.property_types
+    ADD CONSTRAINT property_types_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: seller_attendees seller_attendees_pkey; Type: CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.seller_attendees
+    ADD CONSTRAINT seller_attendees_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: seller_business_info seller_business_info_pkey; Type: CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.seller_business_info
+    ADD CONSTRAINT seller_business_info_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: seller_business seller_business_pkey; Type: CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.seller_business
+    ADD CONSTRAINT seller_business_pkey PRIMARY KEY (seller_id);
+
+
+--
+-- Name: seller_financial_info seller_financial_info_pkey; Type: CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.seller_financial_info
+    ADD CONSTRAINT seller_financial_info_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: seller_financial seller_financial_pkey; Type: CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.seller_financial
+    ADD CONSTRAINT seller_financial_pkey PRIMARY KEY (seller_id);
+
+
+--
+-- Name: seller seller_pkey; Type: CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.seller
+    ADD CONSTRAINT seller_pkey PRIMARY KEY (seller_id);
+
+
+--
+-- Name: seller_primary_contact seller_primary_contact_pkey; Type: CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.seller_primary_contact
+    ADD CONSTRAINT seller_primary_contact_pkey PRIMARY KEY (seller_id);
+
+
+--
+-- Name: seller_profiles seller_profiles_pkey; Type: CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.seller_profiles
+    ADD CONSTRAINT seller_profiles_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: seller_reference seller_reference_pkey; Type: CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.seller_reference
+    ADD CONSTRAINT seller_reference_pkey PRIMARY KEY (seller_id);
+
+
+--
+-- Name: seller_references seller_references_pkey; Type: CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.seller_references
+    ADD CONSTRAINT seller_references_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: seller_stall seller_stall_pkey; Type: CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.seller_stall
+    ADD CONSTRAINT seller_stall_pkey PRIMARY KEY (seller_stall_id);
+
+
+--
+-- Name: seller_target_market seller_target_market_pkey; Type: CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.seller_target_market
+    ADD CONSTRAINT seller_target_market_pkey PRIMARY KEY (target_market_number);
+
+
+--
+-- Name: seller_target_markets seller_target_markets_pkey; Type: CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.seller_target_markets
+    ADD CONSTRAINT seller_target_markets_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: stall_database stall_database_pkey; Type: CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.stall_database
+    ADD CONSTRAINT stall_database_pkey PRIMARY KEY (stall_number_id);
+
+
+--
+-- Name: stall_inventory stall_inventory_pkey; Type: CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.stall_inventory
+    ADD CONSTRAINT stall_inventory_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: stall_types stall_types_pkey; Type: CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.stall_types
+    ADD CONSTRAINT stall_types_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: stalls stalls_pkey; Type: CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.stalls
+    ADD CONSTRAINT stalls_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: system_settings system_settings_pkey; Type: CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.system_settings
+    ADD CONSTRAINT system_settings_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: time_slots time_slots_pkey; Type: CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.time_slots
+    ADD CONSTRAINT time_slots_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: transportation transportation_pkey; Type: CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.transportation
+    ADD CONSTRAINT transportation_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: travel_plans travel_plans_pkey; Type: CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.travel_plans
+    ADD CONSTRAINT travel_plans_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: idx_buyer_idx_buyer_category; Type: INDEX; Schema: public; Owner: splash25user
+--
+
+CREATE INDEX idx_buyer_idx_buyer_category ON public.buyer USING btree (category_id);
+
+
+--
+-- Name: idx_buyer_idx_buyer_email; Type: INDEX; Schema: public; Owner: splash25user
+--
+
+CREATE INDEX idx_buyer_idx_buyer_email ON public.buyer USING btree (email);
+
+
+--
+-- Name: idx_buyer_idx_buyer_status; Type: INDEX; Schema: public; Owner: splash25user
+--
+
+CREATE INDEX idx_buyer_idx_buyer_status ON public.buyer USING btree (status);
+
+
+--
+-- Name: idx_buyer_interest_idx_buyer_interest_buyer; Type: INDEX; Schema: public; Owner: splash25user
+--
+
+CREATE INDEX idx_buyer_interest_idx_buyer_interest_buyer ON public.buyer_interest USING btree (buyer_id);
+
+
+--
+-- Name: idx_buyer_interest_idx_buyer_interest_interest; Type: INDEX; Schema: public; Owner: splash25user
+--
+
+CREATE INDEX idx_buyer_interest_idx_buyer_interest_interest ON public.buyer_interest USING btree (interest_id);
+
+
+--
+-- Name: idx_buyer_profile_interests_idx_buyer_profile_interests_buyer; Type: INDEX; Schema: public; Owner: splash25user
+--
+
+CREATE INDEX idx_buyer_profile_interests_idx_buyer_profile_interests_buyer ON public.buyer_profile_interests USING btree (buyer_profile_id);
+
+
+--
+-- Name: idx_buyer_profile_interests_idx_buyer_profile_interests_interes; Type: INDEX; Schema: public; Owner: splash25user
+--
+
+CREATE INDEX idx_buyer_profile_interests_idx_buyer_profile_interests_interes ON public.buyer_profile_interests USING btree (interest_id);
+
+
+--
+-- Name: idx_buyer_profiles_idx_buyer_profiles_category; Type: INDEX; Schema: public; Owner: splash25user
+--
+
+CREATE INDEX idx_buyer_profiles_idx_buyer_profiles_category ON public.buyer_profiles USING btree (category_id);
+
+
+--
+-- Name: idx_buyer_profiles_idx_buyer_profiles_status; Type: INDEX; Schema: public; Owner: splash25user
+--
+
+CREATE INDEX idx_buyer_profiles_idx_buyer_profiles_status ON public.buyer_profiles USING btree (status);
+
+
+--
+-- Name: idx_buyer_profiles_idx_buyer_profiles_user_id; Type: INDEX; Schema: public; Owner: splash25user
+--
+
+CREATE INDEX idx_buyer_profiles_idx_buyer_profiles_user_id ON public.buyer_profiles USING btree (user_id);
+
+
+--
+-- Name: idx_meetings_idx_meetings_attendee; Type: INDEX; Schema: public; Owner: splash25user
+--
+
+CREATE INDEX idx_meetings_idx_meetings_attendee ON public.meetings USING btree (attendee_id);
+
+
+--
+-- Name: idx_meetings_idx_meetings_buyer_id; Type: INDEX; Schema: public; Owner: splash25user
+--
+
+CREATE INDEX idx_meetings_idx_meetings_buyer_id ON public.meetings USING btree (buyer_id);
+
+
+--
+-- Name: idx_meetings_idx_meetings_seller_id; Type: INDEX; Schema: public; Owner: splash25user
+--
+
+CREATE INDEX idx_meetings_idx_meetings_seller_id ON public.meetings USING btree (seller_id);
+
+
+--
+-- Name: idx_meetings_idx_meetings_status; Type: INDEX; Schema: public; Owner: splash25user
+--
+
+CREATE INDEX idx_meetings_idx_meetings_status ON public.meetings USING btree (status);
+
+
+--
+-- Name: idx_seller_attendees_idx_seller_attendees_seller; Type: INDEX; Schema: public; Owner: splash25user
+--
+
+CREATE INDEX idx_seller_attendees_idx_seller_attendees_seller ON public.seller_attendees USING btree (seller_profile_id);
+
+
+--
+-- Name: idx_seller_idx_seller_status; Type: INDEX; Schema: public; Owner: splash25user
+--
+
+CREATE INDEX idx_seller_idx_seller_status ON public.seller USING btree (status);
+
+
+--
+-- Name: idx_seller_profiles_business_images; Type: INDEX; Schema: public; Owner: splash25user
+--
+
+CREATE INDEX idx_seller_profiles_business_images ON public.seller_profiles USING gin (business_images);
+
+
+--
+-- Name: idx_seller_profiles_idx_seller_profiles_property_type; Type: INDEX; Schema: public; Owner: splash25user
+--
+
+CREATE INDEX idx_seller_profiles_idx_seller_profiles_property_type ON public.seller_profiles USING btree (property_type_id);
+
+
+--
+-- Name: idx_seller_profiles_idx_seller_profiles_status; Type: INDEX; Schema: public; Owner: splash25user
+--
+
+CREATE INDEX idx_seller_profiles_idx_seller_profiles_status ON public.seller_profiles USING btree (status);
+
+
+--
+-- Name: idx_seller_profiles_idx_seller_profiles_user_id; Type: INDEX; Schema: public; Owner: splash25user
+--
+
+CREATE INDEX idx_seller_profiles_idx_seller_profiles_user_id ON public.seller_profiles USING btree (user_id);
+
+
+--
+-- Name: idx_seller_target_market_idx_seller_target_market_interest; Type: INDEX; Schema: public; Owner: splash25user
+--
+
+CREATE INDEX idx_seller_target_market_idx_seller_target_market_interest ON public.seller_target_market USING btree (target_market_id);
+
+
+--
+-- Name: idx_seller_target_market_idx_seller_target_market_seller; Type: INDEX; Schema: public; Owner: splash25user
+--
+
+CREATE INDEX idx_seller_target_market_idx_seller_target_market_seller ON public.seller_target_market USING btree (seller_id);
+
+
+--
+-- Name: idx_seller_target_markets_idx_seller_target_markets_interest; Type: INDEX; Schema: public; Owner: splash25user
+--
+
+CREATE INDEX idx_seller_target_markets_idx_seller_target_markets_interest ON public.seller_target_markets USING btree (interest_id);
+
+
+--
+-- Name: idx_seller_target_markets_idx_seller_target_markets_seller; Type: INDEX; Schema: public; Owner: splash25user
+--
+
+CREATE INDEX idx_seller_target_markets_idx_seller_target_markets_seller ON public.seller_target_markets USING btree (seller_profile_id);
+
+
+--
+-- Name: idx_stalls_idx_stalls_number; Type: INDEX; Schema: public; Owner: splash25user
+--
+
+CREATE INDEX idx_stalls_idx_stalls_number ON public.stalls USING btree (allocated_stall_number);
+
+
+--
+-- Name: idx_stalls_idx_stalls_seller_id; Type: INDEX; Schema: public; Owner: splash25user
+--
+
+CREATE INDEX idx_stalls_idx_stalls_seller_id ON public.stalls USING btree (seller_id);
+
+
+--
+-- Name: idx_stalls_idx_stalls_type; Type: INDEX; Schema: public; Owner: splash25user
+--
+
+CREATE INDEX idx_stalls_idx_stalls_type ON public.stalls USING btree (stall_type_id);
+
+
+--
+-- Name: idx_time_slots_idx_time_slots_available; Type: INDEX; Schema: public; Owner: splash25user
+--
+
+CREATE INDEX idx_time_slots_idx_time_slots_available ON public.time_slots USING btree (is_available);
+
+
+--
+-- Name: idx_time_slots_idx_time_slots_user_id; Type: INDEX; Schema: public; Owner: splash25user
+--
+
+CREATE INDEX idx_time_slots_idx_time_slots_user_id ON public.time_slots USING btree (user_id);
+
+
+--
+-- Name: idx_users_idx_users_email; Type: INDEX; Schema: public; Owner: splash25user
+--
+
+CREATE INDEX idx_users_idx_users_email ON public.users USING btree (email);
+
+
+--
+-- Name: idx_users_idx_users_role; Type: INDEX; Schema: public; Owner: splash25user
+--
+
+CREATE INDEX idx_users_idx_users_role ON public.users USING btree (role);
+
+
+--
+-- Name: accommodations accommodations_travel_plan_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.accommodations
+    ADD CONSTRAINT accommodations_travel_plan_id_fkey FOREIGN KEY (travel_plan_id) REFERENCES public.travel_plans(id);
+
+
+--
+-- Name: buyer_business buyer_business_buyer_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.buyer_business
+    ADD CONSTRAINT buyer_business_buyer_id_fkey FOREIGN KEY (buyer_id) REFERENCES public.buyer(buyer_id);
+
+
+--
+-- Name: buyer_business_info buyer_business_info_buyer_profile_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.buyer_business_info
+    ADD CONSTRAINT buyer_business_info_buyer_profile_id_fkey FOREIGN KEY (buyer_profile_id) REFERENCES public.buyer_profiles(id);
+
+
+--
+-- Name: buyer buyer_category_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.buyer
+    ADD CONSTRAINT buyer_category_id_fkey FOREIGN KEY (category_id) REFERENCES public.buyer_category(buyer_category_id);
+
+
+--
+-- Name: buyer_demographic buyer_demographic_buyer_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.buyer_demographic
+    ADD CONSTRAINT buyer_demographic_buyer_id_fkey FOREIGN KEY (buyer_id) REFERENCES public.buyer(buyer_id);
+
+
+--
+-- Name: buyer_financial buyer_financial_buyer_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.buyer_financial
+    ADD CONSTRAINT buyer_financial_buyer_id_fkey FOREIGN KEY (buyer_id) REFERENCES public.buyer(buyer_id);
+
+
+--
+-- Name: buyer_financial_info buyer_financial_info_buyer_profile_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.buyer_financial_info
+    ADD CONSTRAINT buyer_financial_info_buyer_profile_id_fkey FOREIGN KEY (buyer_profile_id) REFERENCES public.buyer_profiles(id);
+
+
+--
+-- Name: buyer_interest buyer_interest_buyer_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.buyer_interest
+    ADD CONSTRAINT buyer_interest_buyer_id_fkey FOREIGN KEY (buyer_id) REFERENCES public.buyer(buyer_id);
+
+
+--
+-- Name: buyer_interest buyer_interest_interest_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.buyer_interest
+    ADD CONSTRAINT buyer_interest_interest_id_fkey FOREIGN KEY (interest_id) REFERENCES public.interest(interest_id);
+
+
+--
+-- Name: buyer_misc buyer_misc_buyer_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.buyer_misc
+    ADD CONSTRAINT buyer_misc_buyer_id_fkey FOREIGN KEY (buyer_id) REFERENCES public.buyer(buyer_id);
+
+
+--
+-- Name: buyer_profile_interests buyer_profile_interests_buyer_profile_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.buyer_profile_interests
+    ADD CONSTRAINT buyer_profile_interests_buyer_profile_id_fkey FOREIGN KEY (buyer_profile_id) REFERENCES public.buyer_profiles(id);
+
+
+--
+-- Name: buyer_profile_interests buyer_profile_interests_interest_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.buyer_profile_interests
+    ADD CONSTRAINT buyer_profile_interests_interest_id_fkey FOREIGN KEY (interest_id) REFERENCES public.interests(id);
+
+
+--
+-- Name: buyer_profiles buyer_profiles_category_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.buyer_profiles
+    ADD CONSTRAINT buyer_profiles_category_id_fkey FOREIGN KEY (category_id) REFERENCES public.buyer_categories(id);
+
+
+--
+-- Name: buyer_profiles buyer_profiles_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.buyer_profiles
+    ADD CONSTRAINT buyer_profiles_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
+-- Name: buyer_reference buyer_reference_buyer_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.buyer_reference
+    ADD CONSTRAINT buyer_reference_buyer_id_fkey FOREIGN KEY (buyer_id) REFERENCES public.buyer(buyer_id);
+
+
+--
+-- Name: buyer_references buyer_references_buyer_profile_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.buyer_references
+    ADD CONSTRAINT buyer_references_buyer_profile_id_fkey FOREIGN KEY (buyer_profile_id) REFERENCES public.buyer_profiles(id);
+
+
+--
+-- Name: time_slots fk_time_slots_meeting; Type: FK CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.time_slots
+    ADD CONSTRAINT fk_time_slots_meeting FOREIGN KEY (meeting_id) REFERENCES public.meetings(id);
+
+
+--
+-- Name: ground_transportation ground_transportation_travel_plan_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.ground_transportation
+    ADD CONSTRAINT ground_transportation_travel_plan_id_fkey FOREIGN KEY (travel_plan_id) REFERENCES public.travel_plans(id);
+
+
+--
+-- Name: invited_buyers invited_buyers_invited_by_fkey; Type: FK CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.invited_buyers
+    ADD CONSTRAINT invited_buyers_invited_by_fkey FOREIGN KEY (invited_by) REFERENCES public.users(id);
+
+
+--
+-- Name: listing_dates listing_dates_listing_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.listing_dates
+    ADD CONSTRAINT listing_dates_listing_id_fkey FOREIGN KEY (listing_id) REFERENCES public.listings(id);
+
+
+--
+-- Name: listings listings_seller_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.listings
+    ADD CONSTRAINT listings_seller_id_fkey FOREIGN KEY (seller_id) REFERENCES public.users(id);
+
+
+--
+-- Name: meetings meetings_attendee_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.meetings
+    ADD CONSTRAINT meetings_attendee_id_fkey FOREIGN KEY (attendee_id) REFERENCES public.seller_attendees(id);
+
+
+--
+-- Name: meetings meetings_buyer_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.meetings
+    ADD CONSTRAINT meetings_buyer_id_fkey FOREIGN KEY (buyer_id) REFERENCES public.users(id);
+
+
+--
+-- Name: meetings meetings_requestor_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.meetings
+    ADD CONSTRAINT meetings_requestor_id_fkey FOREIGN KEY (requestor_id) REFERENCES public.users(id);
+
+
+--
+-- Name: meetings meetings_seller_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.meetings
+    ADD CONSTRAINT meetings_seller_id_fkey FOREIGN KEY (seller_id) REFERENCES public.users(id);
+
+
+--
+-- Name: meetings meetings_time_slot_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.meetings
+    ADD CONSTRAINT meetings_time_slot_id_fkey FOREIGN KEY (time_slot_id) REFERENCES public.time_slots(id);
+
+
+--
+-- Name: migration_mapping_buyers migration_mapping_buyers_splash25_buyer_profile_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.migration_mapping_buyers
+    ADD CONSTRAINT migration_mapping_buyers_splash25_buyer_profile_id_fkey FOREIGN KEY (splash25_buyer_profile_id) REFERENCES public.buyer_profiles(id);
+
+
+--
+-- Name: migration_mapping_buyers migration_mapping_buyers_splash25_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.migration_mapping_buyers
+    ADD CONSTRAINT migration_mapping_buyers_splash25_user_id_fkey FOREIGN KEY (splash25_user_id) REFERENCES public.users(id);
+
+
+--
+-- Name: migration_mapping_sellers migration_mapping_sellers_splash25_seller_profile_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.migration_mapping_sellers
+    ADD CONSTRAINT migration_mapping_sellers_splash25_seller_profile_id_fkey FOREIGN KEY (splash25_seller_profile_id) REFERENCES public.seller_profiles(id);
+
+
+--
+-- Name: migration_mapping_sellers migration_mapping_sellers_splash25_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.migration_mapping_sellers
+    ADD CONSTRAINT migration_mapping_sellers_splash25_user_id_fkey FOREIGN KEY (splash25_user_id) REFERENCES public.users(id);
+
+
+--
+-- Name: pending_buyers pending_buyers_invited_buyer_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.pending_buyers
+    ADD CONSTRAINT pending_buyers_invited_buyer_id_fkey FOREIGN KEY (invited_buyer_id) REFERENCES public.invited_buyers(id);
+
+
+--
+-- Name: seller_attendees seller_attendees_seller_profile_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.seller_attendees
+    ADD CONSTRAINT seller_attendees_seller_profile_id_fkey FOREIGN KEY (seller_profile_id) REFERENCES public.seller_profiles(id);
+
+
+--
+-- Name: seller_business_info seller_business_info_seller_profile_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.seller_business_info
+    ADD CONSTRAINT seller_business_info_seller_profile_id_fkey FOREIGN KEY (seller_profile_id) REFERENCES public.seller_profiles(id);
+
+
+--
+-- Name: seller_business seller_business_seller_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.seller_business
+    ADD CONSTRAINT seller_business_seller_id_fkey FOREIGN KEY (seller_id) REFERENCES public.seller(seller_id);
+
+
+--
+-- Name: seller_business seller_business_seller_type_fkey; Type: FK CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.seller_business
+    ADD CONSTRAINT seller_business_seller_type_fkey FOREIGN KEY (seller_type) REFERENCES public.property_type(property_type_id);
+
+
+--
+-- Name: seller_financial_info seller_financial_info_seller_profile_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.seller_financial_info
+    ADD CONSTRAINT seller_financial_info_seller_profile_id_fkey FOREIGN KEY (seller_profile_id) REFERENCES public.seller_profiles(id);
+
+
+--
+-- Name: seller_financial seller_financial_seller_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.seller_financial
+    ADD CONSTRAINT seller_financial_seller_id_fkey FOREIGN KEY (seller_id) REFERENCES public.seller(seller_id);
+
+
+--
+-- Name: seller_primary_contact seller_primary_contact_seller_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.seller_primary_contact
+    ADD CONSTRAINT seller_primary_contact_seller_id_fkey FOREIGN KEY (seller_id) REFERENCES public.seller(seller_id);
+
+
+--
+-- Name: seller_profiles seller_profiles_property_type_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.seller_profiles
+    ADD CONSTRAINT seller_profiles_property_type_id_fkey FOREIGN KEY (property_type_id) REFERENCES public.property_types(id);
+
+
+--
+-- Name: seller_profiles seller_profiles_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.seller_profiles
+    ADD CONSTRAINT seller_profiles_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
+-- Name: seller_reference seller_reference_seller_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.seller_reference
+    ADD CONSTRAINT seller_reference_seller_id_fkey FOREIGN KEY (seller_id) REFERENCES public.seller(seller_id);
+
+
+--
+-- Name: seller_references seller_references_seller_profile_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.seller_references
+    ADD CONSTRAINT seller_references_seller_profile_id_fkey FOREIGN KEY (seller_profile_id) REFERENCES public.seller_profiles(id);
+
+
+--
+-- Name: seller_stall seller_stall_seller_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.seller_stall
+    ADD CONSTRAINT seller_stall_seller_id_fkey FOREIGN KEY (seller_id) REFERENCES public.seller(seller_id);
+
+
+--
+-- Name: seller_stall seller_stall_stall_type_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.seller_stall
+    ADD CONSTRAINT seller_stall_stall_type_id_fkey FOREIGN KEY (stall_type_id) REFERENCES public.stall_types(id);
+
+
+--
+-- Name: seller_target_market seller_target_market_seller_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.seller_target_market
+    ADD CONSTRAINT seller_target_market_seller_id_fkey FOREIGN KEY (seller_id) REFERENCES public.seller(seller_id);
+
+
+--
+-- Name: seller_target_market seller_target_market_target_market_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.seller_target_market
+    ADD CONSTRAINT seller_target_market_target_market_id_fkey FOREIGN KEY (target_market_id) REFERENCES public.interest(interest_id);
+
+
+--
+-- Name: seller_target_markets seller_target_markets_interest_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.seller_target_markets
+    ADD CONSTRAINT seller_target_markets_interest_id_fkey FOREIGN KEY (interest_id) REFERENCES public.interests(id);
+
+
+--
+-- Name: seller_target_markets seller_target_markets_seller_profile_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.seller_target_markets
+    ADD CONSTRAINT seller_target_markets_seller_profile_id_fkey FOREIGN KEY (seller_profile_id) REFERENCES public.seller_profiles(id);
+
+
+--
+-- Name: stall_database stall_database_stall_type_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.stall_database
+    ADD CONSTRAINT stall_database_stall_type_id_fkey FOREIGN KEY (stall_type_id) REFERENCES public.stall_types(id);
+
+
+--
+-- Name: stall_inventory stall_inventory_stall_type_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.stall_inventory
+    ADD CONSTRAINT stall_inventory_stall_type_id_fkey FOREIGN KEY (stall_type_id) REFERENCES public.stall_types(id);
+
+
+--
+-- Name: stalls stalls_seller_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.stalls
+    ADD CONSTRAINT stalls_seller_id_fkey FOREIGN KEY (seller_id) REFERENCES public.users(id);
+
+
+--
+-- Name: stalls stalls_stall_type_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.stalls
+    ADD CONSTRAINT stalls_stall_type_id_fkey FOREIGN KEY (stall_type_id) REFERENCES public.stall_types(id);
+
+
+--
+-- Name: time_slots time_slots_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.time_slots
+    ADD CONSTRAINT time_slots_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
+-- Name: transportation transportation_travel_plan_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.transportation
+    ADD CONSTRAINT transportation_travel_plan_id_fkey FOREIGN KEY (travel_plan_id) REFERENCES public.travel_plans(id);
+
+
+--
+-- Name: travel_plans travel_plans_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: splash25user
+--
+
+ALTER TABLE ONLY public.travel_plans
+    ADD CONSTRAINT travel_plans_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
+-- PostgreSQL database dump complete
+--
+
